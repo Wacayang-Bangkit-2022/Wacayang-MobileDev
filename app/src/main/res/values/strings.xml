@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name" translatable="false">Wacayang</string>
+    <string name="home" translatable="false">Home</string>
+    <string name="favorite">Favorite</string>
+    <string name="setting">Settings</string>
+    <string name="language">Language</string>
+    <string name="about">About This App</string>
+    <string name="about_app">This app is created by team C22-383 Bangkit 2022. Version: v1.0</string>
+
+    <string name="item_title" translatable="false">Item Title</string>
+    <string name="item_desc" translatable="false">This is a dummy description about the item showed on this card. Nothing important written here. This is a dummy description about the item showed on this card.\n\nNothing important written here. This is a dummy description about the item showed on this card. Nothing important written here.\n\nThis is a dummy description about the item showed on this card. Nothing important written here. This is a dummy description about the item showed on this card. Nothing important written here. This is a dummy description about the item showed on this card. Nothing important written here.</string>
+
+    <string name="camera_failed">Failed to operate camera</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="show_more">Show More</string>
+    <string name="show_less">Show Less</string>
+    <string name="sort_ascending">Sort Ascending</string>
+    <string name="sort_descending">Sort Descending</string>
+    <string name="sort_default">Sort Default</string>
+    <string name="view_all">View All</string>
+    <string name="more">More</string>
+    <string name="retake">Retake</string>
+    <string name="upload">Upload</string>
+    <string name="no_item_found">No Item Found</string>
+    <string name="video_player_failure">Failed to initialize video player</string>
+    <string name="network_error">Network error. Please check your connection.</string>
+    <string name="scan_prompt_text">Let\'s scan to discover wayang!</string>
+
+    <string name="search">Search Wayang</string>
+    <string name="search_found">%1$d Wayang(s) Found</string>
+
+    <string name="search_favorite">Search Favorite Wayang</string>
+    <string name="all_favorites">%1$d Favorites Wayang(s)</string>
+    <string name="no_favorite">No Favorite Yet. Let\'s add some!</string>
+    <string name="search_favorite_found">%1$d Favorite(s) Found</string>
+
+    <string name="banner_text">What Wayang to\nDiscover Today?</string>
+    <string name="show_title">Related Wayang Show</string>
+    <string name="details_title">Wayang Details</string>
+    <string name="home_header1">Wayang Characters</string>
+    <string name="refresh">Refresh Page</string>
+    <string name="all_item">Explore All Wayangs</string>
+    <string name="search_banner_text">Let\'s discover wayangs!</string>
+    <string name="confirm_upload">Confirm Upload</string>
+    <string name="capture_requirement_prompt">Please Capture Within The Border</string>
+</resources>

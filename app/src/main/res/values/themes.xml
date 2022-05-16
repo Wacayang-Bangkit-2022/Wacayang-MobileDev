@@ -1,0 +1,59 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Wacayang" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primary_color_1</item>
+        <item name="colorPrimaryVariant">@color/primary_color_2</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/secondary_color_1</item>
+        <item name="colorSecondaryVariant">@color/secondary_color_1</item>
+        <item name="colorOnSecondary">@color/primary_color_1</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+    </style>
+
+    <style name="Button">
+        <item name="android:backgroundTint">@color/secondary_color_1</item>
+        <item name="android:textColor">@color/primary_color_1</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <style name="Button.Chip">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:layout_height">42dp</item>
+    </style>
+
+    <style name="TitleText">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TitleText.2">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="TitleText.3">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="SubTitle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="SubTitle.2">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="FadePanel">
+        <item name="android:background">@color/black</item>
+        <item name="android:alpha">0.5</item>
+    </style>
+
+</resources>

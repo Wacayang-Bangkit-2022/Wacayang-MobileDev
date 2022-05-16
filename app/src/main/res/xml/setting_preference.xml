@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="@string/language"
+        android:title="@string/language"
+        android:icon="@drawable/ic_baseline_language_setting_24" />
+
+    <Preference
+        android:key="@string/about"
+        android:title="@string/about"
+        android:icon="@drawable/ic_baseline_info_setting_24" />
+
+</PreferenceScreen>

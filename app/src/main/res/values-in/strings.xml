@@ -1,0 +1,42 @@
+<resources>
+    <string name="favorite">Favorit</string>
+    <string name="setting">Pengaturan</string>
+    <string name="language">Bahasa</string>
+    <string name="about">Tentang Aplikasi</string>
+    <string name="about_app">Aplikasi ini dibuat oleh tim C22-383 Bangkit 2022. Versi: v1.0</string>
+
+    <string name="camera_failed">Gagal mengoperasikan kamera</string>
+    <string name="permission_denied">Izin tidak diberikan</string>
+    <string name="choose_image">Pilih Gambar</string>
+    <string name="show_more">Lihat Detil</string>
+    <string name="show_less">Tutup Detil</string>
+    <string name="sort_ascending">Urutkan Naik</string>
+    <string name="sort_descending">Urutkan Turun</string>
+    <string name="sort_default">Urutkan Default</string>
+    <string name="view_all">Semua</string>
+    <string name="more">Semua</string>
+    <string name="retake">Ambil Ulang</string>
+    <string name="upload">Unggah</string>
+    <string name="no_item_found">Tidak Ditemukan</string>
+    <string name="video_player_failure">Gagal mengoperasikan video player</string>
+    <string name="scan_prompt_text">Ayo scan untuk cari wayang!</string>
+    <string name="network_error">Kesalahan network. Mohon cek koneksi internet Anda.</string>
+
+    <string name="search">Cari Wayang</string>
+    <string name="search_found">%1$d Wayang Ditemukan</string>
+
+    <string name="search_favorite">Cari Wayang Favorit</string>
+    <string name="all_favorites">%1$d Wayang Favorit</string>
+    <string name="no_favorite">Tidak ada Favorite. Ayo tambahkan!</string>
+    <string name="search_favorite_found">%1$d Favorit Ditemukan</string>
+
+    <string name="banner_text">Wayang Apa\nDipelajari Hari Ini?</string>
+    <string name="show_title">Pagelaran Wayang Terkait</string>
+    <string name="details_title">Detil Wayang</string>
+    <string name="home_header1">Karakter Wayang</string>
+    <string name="refresh">Muat Ulang</string>
+    <string name="all_item">Jelajahi Wayang</string>
+    <string name="search_banner_text">Mari jelajahi wayang!</string>
+    <string name="confirm_upload">Konfirmasi Unggah</string>
+    <string name="capture_requirement_prompt">Ambil Gambar di Dalam Batasan</string>
+</resources>
