@@ -1,4 +1,5 @@
 plugins {
+    id 'com.google.secrets_gradle_plugin' version '0.4'
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
@@ -15,7 +16,6 @@ android {
         versionCode 1
         versionName "1.0"
 
-        buildConfigField 'String', 'API_KEY', '"AIzaSyAklohZEunlOTpi6dr7bm9LUpDU5-g5PMs"'
         buildConfigField 'String', 'BASE_URL', '"https://wacayang-api-slx6by6ooa-et.a.run.app/"'
         buildConfigField 'String', 'BASE_TOKEN', '"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"'
 

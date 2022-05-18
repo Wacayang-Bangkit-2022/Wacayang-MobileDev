@@ -77,7 +77,7 @@ object Utils {
         }
     }
 
-    fun transferBitmapToFile(bitmap: Bitmap, file: File): File {
+    fun convertBitmapToFile(bitmap: Bitmap, file: File): File {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, FileOutputStream(file))
         return file
     }

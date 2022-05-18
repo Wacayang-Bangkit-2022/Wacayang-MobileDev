@@ -1,16 +1,21 @@
 package com.c22_pc383.wacayang
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.c22_pc383.wacayang.databinding.ActivityConfirmUploadBinding
 import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.c22_pc383.wacayang.helper.Utils
-import java.io.File
+import java.io.*
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.Executors
 
 
@@ -76,7 +81,9 @@ class ConfirmUploadActivity : AppCompatActivity(), IGeneralSetup {
     }
 
     private fun beginUpload(file: File) {
-        startActivity(Intent(this, DetailsActivity::class.java))
+        startActivity(Intent(this, DetailsActivity::class.java).apply {
+            putExtra(DetailsActivity.WAYANG_ID_EXTRA, 1)
+        })
         finish()
     }
 }

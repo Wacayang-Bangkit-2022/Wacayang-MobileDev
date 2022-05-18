@@ -1,5 +1,6 @@
 package com.c22_pc383.wacayang
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
@@ -126,8 +127,15 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
     }
 
     private fun onSuccess() {
+        val key = applicationContext.packageManager
+            .getApplicationInfo(
+                applicationContext.packageName,
+                PackageManager.GET_META_DATA
+            ).metaData["api_key"].toString()
+
         (supportFragmentManager.findFragmentById(R.id.youtube_fragment) as YoutubeFragmentX)
-            .initialize(BuildConfig.API_KEY, this)
+            .initialize(key, this)
+
 
         binding.imageSlider.adapter = ImageSliderAdapter(this, Utils.splitImageUrls(mWayang.image))
         binding.imageTabLayout.setupWithViewPager(binding.imageSlider)

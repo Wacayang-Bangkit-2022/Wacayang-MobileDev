@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
@@ -19,7 +18,6 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import com.c22_pc383.wacayang.databinding.ActivityCameraBinding
 import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.c22_pc383.wacayang.helper.Utils
@@ -140,7 +138,7 @@ class CameraActivity : AppCompatActivity(), IGeneralSetup {
             bitmap = Utils.stabilizeRotateBitmap(bitmap, isBackCamera)
         }
         bitmap = Utils.cropSquareBitmap(bitmap)
-        val imageFile = Utils.transferBitmapToFile(bitmap, file)
+        val imageFile = Utils.convertBitmapToFile(bitmap, file)
 
         startActivity(Intent(this, ConfirmUploadActivity::class.java).apply {
             putExtra(CAPTURED_IMG, imageFile)
