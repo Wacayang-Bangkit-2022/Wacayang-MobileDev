@@ -1,27 +1,37 @@
 package com.c22_pc383.wacayang
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.Bundle
-import android.os.Environment
-import android.util.Log
+import android.os.*
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.postDelayed
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
+import com.c22_pc383.wacayang.data.AppPreference
+import com.c22_pc383.wacayang.data.WayangPredictResponse
 import com.c22_pc383.wacayang.databinding.ActivityConfirmUploadBinding
+import com.c22_pc383.wacayang.factory.WayangViewModelFactory
 import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.c22_pc383.wacayang.helper.Utils
+import com.c22_pc383.wacayang.repository.WayangRepository
+import com.c22_pc383.wacayang.view_model.WayangViewModel
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.*
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.Executors
 
 
 class ConfirmUploadActivity : AppCompatActivity(), IGeneralSetup {
     private lateinit var binding: ActivityConfirmUploadBinding
+    private lateinit var viewModel: WayangViewModel
+
+    private var predictedResponse: WayangPredictResponse? = null
+
     private val compressExecutor = Executors.newFixedThreadPool(1)
+    private val handler = Handler(Looper.getMainLooper())
 
     private val imageCompressListener: Utils.CompressImageTask.ICompressListener =
         object : Utils.CompressImageTask.ICompressListener {
@@ -41,7 +51,12 @@ class ConfirmUploadActivity : AppCompatActivity(), IGeneralSetup {
             setDisplayShowHomeEnabled(true)
         }
 
+        viewModel = ViewModelProvider(
+            this, WayangViewModelFactory(WayangRepository.getAIRepository())
+        )[WayangViewModel::class.java]
+
         setup()
+        observerCall()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -59,6 +74,16 @@ class ConfirmUploadActivity : AppCompatActivity(), IGeneralSetup {
         super.onBackPressed()
     }
 
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
+    }
+
     override fun setup() {
         val file = intent.getSerializableExtra(CameraActivity.CAPTURED_IMG) as File
         binding.itemImage.setImageBitmap(BitmapFactory.decodeFile(file.absolutePath))
@@ -67,10 +92,22 @@ class ConfirmUploadActivity : AppCompatActivity(), IGeneralSetup {
         binding.uploadBtn.setOnClickListener { onBeforeUpload(file) }
     }
 
+    override fun observerCall() {
+        viewModel.apply {
+            predictedWayang.observe(this@ConfirmUploadActivity) { predictedResponse = it }
+            isPredictWayangError.observe(this@ConfirmUploadActivity) {
+                onEndUpload()
+                if (it) {
+                    enableControl(true)
+                    Utils.toastNetworkError(this@ConfirmUploadActivity)
+                }
+            }
+        }
+    }
+
     override fun enableControl(isEnabled: Boolean) {
         binding.apply {
-            retakeBtn.isEnabled = isEnabled
-            uploadBtn.isEnabled = isEnabled
+            controlPanel.isVisible = isEnabled
             progressBar.isVisible = !isEnabled
         }
     }
@@ -81,9 +118,43 @@ class ConfirmUploadActivity : AppCompatActivity(), IGeneralSetup {
     }
 
     private fun beginUpload(file: File) {
-        startActivity(Intent(this, DetailsActivity::class.java).apply {
-            putExtra(DetailsActivity.WAYANG_ID_EXTRA, 1)
-        })
-        finish()
+        enableControl(false)
+
+        val imageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
+            "file",
+            file.name,
+            imageFile
+        )
+
+        predictedResponse = null
+        viewModel.predictWayang(AppPreference(this).getToken(), imageMultipart)
+    }
+
+    private fun onEndUpload() {
+        if (predictedResponse == null) {
+            enableControl(true)
+            return
+        }
+
+        val predictedLabel = predictedResponse?.predictionLabel
+        Utils.setHtmlText(binding.statusText, resources.getString(R.string.predicted_as, "<b>$predictedLabel</b>"))
+
+        handler.postDelayed(SEARCH_WAIT_DELAY) {
+            Utils.setHtmlText(binding.statusText, resources.getString(R.string.searching_for, "<b>$predictedLabel</b>"))
+
+            handler.postDelayed(SEARCH_WAIT_DELAY) {
+                // Open Search Activity with predicted label as keyword to search Wayang information
+                startActivity(Intent(this, SearchActivity::class.java).apply {
+                    putExtra(SearchActivity.VIEW_ALL_EXTRA, false)
+                    putExtra(SearchActivity.INITIAL_SEARCH_KEYWORD, predictedLabel)
+                })
+                finish()
+            }
+        }
+    }
+
+    companion object {
+        private const val SEARCH_WAIT_DELAY = 1000L
     }
 }

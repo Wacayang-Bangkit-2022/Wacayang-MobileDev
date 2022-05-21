@@ -10,19 +10,21 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.c22_pc383.wacayang.adapter.GridSpacingItemDecoration
+import com.c22_pc383.wacayang.data.AppPreference
+import com.c22_pc383.wacayang.data.Wayang
 import com.c22_pc383.wacayang.databinding.FragmentFavoriteBinding
+import com.c22_pc383.wacayang.factory.WayangViewModelFactory
 import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.c22_pc383.wacayang.helper.Utils
-import com.c22_pc383.wacayang.view_model.FavoriteViewModel
-import com.c22_pc383.wacayang.factory.FavoriteViewModelFactory
-import com.c22_pc383.wacayang.view_model.FavoriteViewModel.Companion.SortType
+import com.c22_pc383.wacayang.repository.WayangRepository
+import com.c22_pc383.wacayang.view_model.WayangViewModel
 
 class FavoriteFragment : Fragment(), IGeneralSetup {
     private lateinit var binding: FragmentFavoriteBinding
-    private lateinit var viewModel: FavoriteViewModel
-    private var searchView: SearchView? = null
-    private var searchQuery: String = ""
+    private lateinit var viewModel: WayangViewModel
     private var isViewAll = true
+    private var listItem = ArrayList<Wayang>()
+    private var searchView: SearchView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,8 +39,8 @@ class FavoriteFragment : Fragment(), IGeneralSetup {
         setHasOptionsMenu(true)
 
         viewModel = ViewModelProvider(
-            this, FavoriteViewModelFactory(requireActivity().application)
-        )[FavoriteViewModel::class.java]
+            this, WayangViewModelFactory(WayangRepository.getDefaultRepository())
+        )[WayangViewModel::class.java]
 
         binding.gridRv.apply {
             layoutManager = GridLayoutManager(context, 2)
@@ -47,10 +49,11 @@ class FavoriteFragment : Fragment(), IGeneralSetup {
         }
 
         setup()
+        observerCall()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.favorite_menu, menu)
+        inflater.inflate(R.menu.search_menu, menu)
 
         val searchManager = requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
         searchView = (menu.findItem(R.id.search)?.actionView as SearchView)
@@ -60,7 +63,6 @@ class FavoriteFragment : Fragment(), IGeneralSetup {
                 setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         if (query != null) {
-                            isViewAll = false
                             clearFocus()
                             search(query)
                         }
@@ -71,62 +73,59 @@ class FavoriteFragment : Fragment(), IGeneralSetup {
             }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.sort_ascend -> {
-                getFavorites(SortType.ASCENDING, searchQuery)
-                return true
-            }
-            R.id.sort_descend -> {
-                getFavorites(SortType.DESCENDING, searchQuery)
-                return true
-            }
-            R.id.sort_default -> {
-                getFavorites(SortType.DEFAULT, searchQuery)
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun setup() {
         viewAll()
         binding.viewAllBtn.setOnClickListener { viewAll() }
     }
 
-    private fun search(keyword: String) {
-        searchQuery = keyword
-        getFavorites(SortType.DEFAULT, searchQuery)
-    }
-
-    private fun getFavorites(sortType: SortType, keyword: String = "") {
-        viewModel.getFavorites(FavoriteViewModel.getSortQuery(keyword, sortType)).observe(viewLifecycleOwner) {
-            if (isViewAll && it.isEmpty()) {
-                binding.searchIcon.isVisible = true
-                binding.searchPanel.isVisible = false
-            } else {
-                binding.searchIcon.isVisible = false
-                binding.searchPanel.isVisible = true
+    override fun observerCall() {
+        viewModel.apply {
+            listFav.observe(viewLifecycleOwner) { list ->
+                listItem.clear()
+                listItem.addAll(list)
             }
 
-            Utils.setupGridListView(requireContext(), binding.gridRv, it, binding.errorView, binding.gridRv)
-
-            binding.foundText.text =
-                if (keyword.isEmpty()) resources.getString(R.string.all_favorites, it.size)
-                else resources.getString(R.string.search_favorite_found, it.size)
-
-            binding.viewAllBtn.visibility = if (!isViewAll) View.VISIBLE else View.INVISIBLE
+            isGetFavError.observe(viewLifecycleOwner) {
+                onEndLoading()
+                if (it) Utils.toastNetworkError(requireContext())
+            }
         }
+    }
+
+    private fun search(keyword: String) {
+        isViewAll = false
+        viewModel.getFavWayangs(AppPreference(requireContext()).getToken(), keyword)
+        onLoading()
+    }
+
+    override fun enableControl(isEnabled: Boolean) {
+        binding.viewAllBtn.visibility = if (!isEnabled) View.VISIBLE else View.INVISIBLE
+        binding.foundText.text =
+            if (isEnabled) resources.getString(R.string.all_favorites)
+            else resources.getString(R.string.search_favorite_found, listItem.size)
     }
 
     private fun viewAll() {
         isViewAll = true
-
-        searchQuery = ""
         searchView?.apply {
             isIconified = true
             clearFocus()
         }
+        viewModel.getFavWayangs(AppPreference(requireContext()).getToken())
 
-        getFavorites(SortType.DEFAULT)
+        onLoading()
+    }
+
+    private fun onLoading() {
+        binding.searchIcon.isVisible = false
+        binding.searchPanel.isVisible = false
+        binding.progressBar.isVisible = true
+    }
+
+    private fun onEndLoading() {
+        binding.searchPanel.isVisible = true
+        binding.progressBar.isVisible = false
+        enableControl(isViewAll)
+        Utils.setupGridListView(requireContext(), binding.gridRv, listItem, binding.errorView, binding.gridRv)
     }
 }

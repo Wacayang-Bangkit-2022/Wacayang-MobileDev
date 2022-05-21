@@ -8,36 +8,31 @@
 
     <androidx.camera.view.PreviewView
         android:id="@+id/cam_view_finder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <View
-        android:id="@+id/crop_view"
+        app:layout_constraintDimensionRatio="3:4"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        style="@style/FadePanel"
+        android:background="@color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/crop_view" />
+        app:layout_constraintBottom_toTopOf="@id/cam_view_finder" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        style="@style/FadePanel"
+        android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/crop_view" />
+        app:layout_constraintTop_toBottomOf="@id/cam_view_finder" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/capture_cam"
@@ -58,7 +53,7 @@
         android:layout_marginBottom="24dp"
         android:text="@string/capture_requirement_prompt"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/crop_view"
+        app:layout_constraintBottom_toTopOf="@+id/cam_view_finder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -68,8 +63,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:src="@drawable/ic_baseline_north_west_24"
-        app:layout_constraintStart_toStartOf="@id/crop_view"
-        app:layout_constraintTop_toTopOf="@+id/crop_view" />
+        app:layout_constraintStart_toStartOf="@id/cam_view_finder"
+        app:layout_constraintTop_toTopOf="@+id/cam_view_finder" />
 
     <ImageView
         android:layout_width="32dp"
@@ -77,8 +72,8 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_baseline_north_east_24"
-        app:layout_constraintEnd_toEndOf="@id/crop_view"
-        app:layout_constraintTop_toTopOf="@+id/crop_view" />
+        app:layout_constraintEnd_toEndOf="@id/cam_view_finder"
+        app:layout_constraintTop_toTopOf="@+id/cam_view_finder" />
 
     <ImageView
         android:layout_width="32dp"
@@ -86,8 +81,8 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_baseline_south_east_24"
-        app:layout_constraintEnd_toEndOf="@id/crop_view"
-        app:layout_constraintBottom_toBottomOf="@+id/crop_view" />
+        app:layout_constraintEnd_toEndOf="@id/cam_view_finder"
+        app:layout_constraintBottom_toBottomOf="@+id/cam_view_finder" />
 
     <ImageView
         android:layout_width="32dp"
@@ -95,8 +90,20 @@
         android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
         android:src="@drawable/ic_baseline_south_west_24"
-        app:layout_constraintStart_toStartOf="@id/crop_view"
-        app:layout_constraintBottom_toBottomOf="@+id/crop_view" />
+        app:layout_constraintStart_toStartOf="@id/cam_view_finder"
+        app:layout_constraintBottom_toBottomOf="@+id/cam_view_finder" />
+
+    <ImageView
+        android:id="@+id/flash_btn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_baseline_flash_off_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/switch_cam"
@@ -125,7 +132,7 @@
     <ProgressBar
         android:visibility="gone"
         android:indeterminateTint="@color/white"
-        android:id="@+id/loading_bar"
+        android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

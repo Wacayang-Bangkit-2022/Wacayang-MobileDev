@@ -6,10 +6,15 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.text.Html
 import android.view.View
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -63,17 +68,6 @@ object Utils {
             matrix.postRotate(0f)
             matrix.postScale(-1f, 1f, bitmap.width / 2f, bitmap.height / 2f)
             Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-        }
-    }
-
-    fun cropSquareBitmap(bitmap: Bitmap): Bitmap {
-        val w = bitmap.width
-        val h = bitmap.height
-
-        return if (w >= h) {
-            Bitmap.createBitmap(bitmap, w/2 - h/2, 0, h, h)
-        } else{
-            Bitmap.createBitmap(bitmap, 0, h/2 - w/2, w, w)
         }
     }
 
@@ -139,4 +133,21 @@ object Utils {
     fun splitImageUrls(combinedUrl: String): List<String> = combinedUrl.split(",")
 
     fun getYoutubeVideoId(url: String): String = url.substringAfter("https://youtu.be/")
+
+    fun setHtmlText(textView: TextView, str: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            textView.text = Html.fromHtml(str, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        else
+            textView.text = Html.fromHtml(str)
+    }
+
+    fun formatBearerToken(token: String): String = "Bearer $token"
+
+    fun toastNetworkError(ctx: Context) {
+        Toast.makeText(
+            ctx,
+            ctx.resources.getString(R.string.network_error),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
 }

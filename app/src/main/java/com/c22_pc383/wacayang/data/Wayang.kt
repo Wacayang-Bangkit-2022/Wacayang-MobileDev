@@ -24,7 +24,10 @@ data class Wayang(
     var image: String,
 
     @field:SerializedName("video")
-    var video: String
+    var video: String,
+
+    @field:SerializedName("is_favorite")
+    var isFavorite: Int = 0
 
 ) : Parcelable {
     companion object {

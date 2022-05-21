@@ -1,24 +1,51 @@
 package com.c22_pc383.wacayang.network
 
-import com.c22_pc383.wacayang.BuildConfig
 import com.c22_pc383.wacayang.data.*
-import retrofit2.Call
+import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface ApiService {
     @GET("wayangs")
-    //@Headers("Authorization: token ${BuildConfig.BASE_TOKEN}")
-    suspend fun getWayangs(@Query("page") page: String): Response<ListWayangResponse>
+    suspend fun getWayangs(
+        @Header("Authorization") token: String,
+        @Query("page") page: String
+    ): Response<ListWayangResponse>
 
     @GET("search")
-    //@Headers("Authorization: token ${BuildConfig.BASE_TOKEN}")
-    suspend fun findWayang(@Query("name") query: String): Response<SearchWayangResponse>
+    suspend fun findWayang(
+        @Header("Authorization") token: String,
+        @Query("name") query: String
+    ): Response<SearchWayangResponse>
 
     @GET("wayangs/{id}")
-    //@Headers("Authorization: token ${BuildConfig.BASE_TOKEN}")
-    suspend fun getWayangDetail(@Path("id") query: String): Response<DetailWayangResponse>
+    suspend fun getWayangDetail(
+        @Header("Authorization") token: String,
+        @Path("id") query: String
+    ): Response<DetailWayangResponse>
+
+    @Multipart
+    @POST("predict")
+    suspend fun predictWayang(
+        @Header("Authorization") token: String,
+        @Part file: MultipartBody.Part
+    ): Response<WayangPredictResponse>
+
+    @GET("add-favorite")
+    suspend fun addFavorite(
+        @Header("Authorization") token: String,
+        @Query("wayang") itemId: Int
+    ): Response<AlterFavResponse>
+
+    @GET("del-favorite")
+    suspend fun delFavorite(
+        @Header("Authorization") token: String,
+        @Query("wayang") itemId: Int
+    ): Response<AlterFavResponse>
+
+    @GET("favorites")
+    suspend fun getFavorites(
+        @Header("Authorization") token: String,
+        @Query("name") query: String?
+    ): Response<FavoriteResponse>
 }

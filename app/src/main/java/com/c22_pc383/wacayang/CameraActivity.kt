@@ -12,12 +12,13 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
+import androidx.camera.core.*
+import androidx.camera.core.AspectRatio.RATIO_4_3
+import androidx.camera.core.ImageCapture.FLASH_MODE_OFF
+import androidx.camera.core.ImageCapture.FLASH_MODE_ON
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import com.c22_pc383.wacayang.data.AppPreference
 import com.c22_pc383.wacayang.databinding.ActivityCameraBinding
 import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.c22_pc383.wacayang.helper.Utils
@@ -27,6 +28,7 @@ class CameraActivity : AppCompatActivity(), IGeneralSetup {
     private lateinit var binding: ActivityCameraBinding
     private var camSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private var imgCapture: ImageCapture? = null
+    private var isFlashOn = false
 
     private val launcherIntentGallery = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -53,6 +55,9 @@ class CameraActivity : AppCompatActivity(), IGeneralSetup {
     }
 
     override fun setup() {
+        isFlashOn = AppPreference(this).getCameraFlashPref()
+        setupFlashImage()
+
         binding.apply {
             captureCam.setOnClickListener { captureImage() }
             switchCam.setOnClickListener {
@@ -61,6 +66,7 @@ class CameraActivity : AppCompatActivity(), IGeneralSetup {
                 openCamera()
             }
             galleryButton.setOnClickListener { openGallery() }
+            flashBtn.setOnClickListener { toggleFlash() }
         }
     }
 
@@ -69,8 +75,20 @@ class CameraActivity : AppCompatActivity(), IGeneralSetup {
             captureCam.isEnabled = isEnabled
             switchCam.isEnabled = isEnabled
             galleryButton.isEnabled = isEnabled
-            loadingBar.visibility = if (isEnabled) View.GONE else View.VISIBLE
+            progressBar.visibility = if (isEnabled) View.GONE else View.VISIBLE
         }
+    }
+
+    private fun toggleFlash() {
+        isFlashOn = !isFlashOn
+        AppPreference(this).setCameraFlashPref(isFlashOn)
+        setupFlashImage()
+    }
+
+    private fun setupFlashImage() {
+        binding.flashBtn.setImageResource(
+            if (isFlashOn) R.drawable.ic_baseline_flash_on_24
+            else R.drawable.ic_baseline_flash_off_24)
     }
 
     private fun openCamera() {
@@ -79,8 +97,11 @@ class CameraActivity : AppCompatActivity(), IGeneralSetup {
             imgCapture = ImageCapture.Builder().build()
 
             val provider = futureProvider.get()
-            val preview = Preview.Builder().build().apply {
-                setSurfaceProvider(binding.camViewFinder.surfaceProvider) }
+            val preview = Preview.Builder()
+                .setTargetAspectRatio(RATIO_4_3)
+                .build().apply {
+                setSurfaceProvider(binding.camViewFinder.surfaceProvider)
+            }
 
             try {
                 provider.apply {
@@ -108,6 +129,7 @@ class CameraActivity : AppCompatActivity(), IGeneralSetup {
         val file = Utils.makeTempFile(application)
         val outputOption = ImageCapture.OutputFileOptions.Builder(file).build()
 
+        toCapture.flashMode = if (isFlashOn) FLASH_MODE_ON else FLASH_MODE_OFF
         toCapture.takePicture(outputOption,
             ContextCompat.getMainExecutor(this@CameraActivity),
             object : ImageCapture.OnImageSavedCallback {
@@ -137,7 +159,6 @@ class CameraActivity : AppCompatActivity(), IGeneralSetup {
             val isBackCamera = camSelector == CameraSelector.DEFAULT_BACK_CAMERA
             bitmap = Utils.stabilizeRotateBitmap(bitmap, isBackCamera)
         }
-        bitmap = Utils.cropSquareBitmap(bitmap)
         val imageFile = Utils.convertBitmapToFile(bitmap, file)
 
         startActivity(Intent(this, ConfirmUploadActivity::class.java).apply {
@@ -155,6 +176,6 @@ class CameraActivity : AppCompatActivity(), IGeneralSetup {
     }
 
     companion object {
-        const val CAPTURED_IMG = "CAPTURED_IMG"
+        const val CAPTURED_IMG = "captured_image"
     }
 }

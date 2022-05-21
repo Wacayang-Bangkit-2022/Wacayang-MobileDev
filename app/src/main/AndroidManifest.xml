@@ -28,6 +28,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wacayang">
         <activity
+            android:name=".LoginActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
             android:name=".ConfirmUploadActivity"
             android:exported="false"
             android:launchMode="singleTop"
@@ -71,7 +77,8 @@
         </activity>
 
         <meta-data
-            android:name = "api_key"
-            android:value = "${API_KEY}"/>
+            android:name="api_key"
+            android:value="${API_KEY}" />
     </application>
+
 </manifest>

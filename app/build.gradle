@@ -4,6 +4,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -17,6 +18,7 @@ android {
         versionName "1.0"
 
         buildConfigField 'String', 'BASE_URL', '"https://wacayang-api-slx6by6ooa-et.a.run.app/"'
+        buildConfigField 'String', 'BASE_AI_URL', '"https://wacayang-ai-api-slx6by6ooa-et.a.run.app/"'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -43,6 +45,8 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.android.gms:play-services-auth:20.2.0'
+
     implementation 'androidx.room:room-paging:2.5.0-alpha01'
     implementation 'androidx.room:room-runtime:2.4.2'
     implementation 'androidx.test.ext:junit-ktx:1.1.3'
@@ -52,6 +56,8 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.2.0'
 
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
+    implementation 'com.google.firebase:firebase-common-ktx:20.1.1'
+    implementation 'com.google.firebase:firebase-auth-ktx:21.0.4'
 
     kapt 'androidx.room:room-compiler:2.4.2'
     implementation 'androidx.room:room-ktx:2.5.0-alpha01'

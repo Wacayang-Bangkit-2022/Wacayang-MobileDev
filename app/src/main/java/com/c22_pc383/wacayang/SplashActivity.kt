@@ -21,7 +21,7 @@ class SplashActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         handler.postDelayed(WAIT_DELAY) {
-            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
             finish()
         }
     }
@@ -29,11 +29,6 @@ class SplashActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        handler.removeCallbacksAndMessages(null)
     }
 
     override fun onDestroy() {

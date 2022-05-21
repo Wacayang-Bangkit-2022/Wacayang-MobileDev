@@ -6,12 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/disabled_color_2"
     android:gravity="center"
+    android:background="@color/disabled_color_2"
     tools:context=".FavoriteFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/search_panel"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -35,10 +35,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/all_favorites" />
+                android:text="@string/search_found" />
 
             <Button
-                android:visibility="gone"
                 android:id="@+id/view_all_btn"
                 style="@style/Button.Chip"
                 android:text="@string/view_all" />
@@ -56,6 +55,7 @@
             android:fastScrollEnabled="false"
             android:nestedScrollingEnabled="false"
             android:scrollbars="none"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -82,16 +82,15 @@
                 android:id="@+id/imageView"
                 android:layout_width="@dimen/image_icon_dimen"
                 android:layout_height="@dimen/image_icon_dimen"
-                android:src="@drawable/ic_baseline_error_outline_24"
+                android:src="@drawable/ic_baseline_favorite_border_24"
                 app:tint="@color/secondary_color_1" />
 
             <TextView
-                android:id="@+id/error_text"
                 style="@style/SubTitle.2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/no_item_found" />
+                android:layout_marginTop="@dimen/margin_small"
+                android:text="@string/favorite_not_found" />
 
         </LinearLayout>
 
@@ -103,7 +102,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:layout_width="@dimen/image_icon_dimen"
@@ -118,5 +117,11 @@
             android:layout_marginTop="@dimen/margin_small"
             android:text="@string/no_favorite" />
     </LinearLayout>
+
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

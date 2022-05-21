@@ -8,11 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.c22_pc383.wacayang.adapter.ImageSliderAdapter
+import com.c22_pc383.wacayang.data.AppPreference
 import com.c22_pc383.wacayang.data.Wayang
 import com.c22_pc383.wacayang.databinding.ActivityDetailsBinding
 import com.c22_pc383.wacayang.helper.IGeneralSetup
-import com.c22_pc383.wacayang.view_model.FavoriteViewModel
-import com.c22_pc383.wacayang.factory.FavoriteViewModelFactory
 import com.c22_pc383.wacayang.factory.WayangViewModelFactory
 import com.c22_pc383.wacayang.helper.Utils
 import com.c22_pc383.wacayang.repository.WayangRepository
@@ -23,10 +22,8 @@ import com.google.android.youtube.player.YoutubeFragmentX
 
 class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInitializedListener {
     private lateinit var binding: ActivityDetailsBinding
-    private lateinit var favViewModel: FavoriteViewModel
-    private lateinit var wayangViewModel: WayangViewModel
+    private lateinit var viewModel: WayangViewModel
 
-    private var tIsFavorite = false
     private var mYouTubePlayer: YouTubePlayer? = null
     private var isFullscreen = false
     private lateinit var mWayang: Wayang
@@ -42,13 +39,9 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
             setDisplayShowHomeEnabled(true)
         }
 
-        wayangViewModel = ViewModelProvider(
-            this, WayangViewModelFactory(WayangRepository.getRepository())
+        viewModel = ViewModelProvider(
+            this, WayangViewModelFactory(WayangRepository.getDefaultRepository())
         )[WayangViewModel::class.java]
-
-        favViewModel = ViewModelProvider(
-            this, FavoriteViewModelFactory(application)
-        )[FavoriteViewModel::class.java]
 
         setup()
         observerCall()
@@ -93,7 +86,7 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
     }
 
     override fun observerCall() {
-        wayangViewModel.apply {
+        viewModel.apply {
             detailWayang.observe(this@DetailsActivity) {
                 mWayang = it
                 onSuccess()
@@ -103,12 +96,30 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
                 binding.progressBar.isVisible = false
                 if (it) { onError() }
             }
+
+            isAddFavError.observe(this@DetailsActivity) {
+                binding.favoriteBtn.isEnabled = true
+                if (it) Utils.toastNetworkError(this@DetailsActivity)
+                else {
+                    mWayang.isFavorite = 1
+                    setupFavoriteButton(mWayang.isFavorite == 1)
+                }
+            }
+
+            isDelFavError.observe(this@DetailsActivity) {
+                binding.favoriteBtn.isEnabled = true
+                if (it) Utils.toastNetworkError(this@DetailsActivity)
+                else {
+                    mWayang.isFavorite = 0
+                    setupFavoriteButton(mWayang.isFavorite == 1)
+                }
+            }
         }
     }
 
     private fun onLoading() {
         val id = intent.getIntExtra(WAYANG_ID_EXTRA, -1)
-        wayangViewModel.getWayangDetail(id.toString())
+        viewModel.getWayangDetail(AppPreference(this).getToken(), id.toString())
 
         binding.progressBar.isVisible = true
         binding.mainView.isVisible = false
@@ -116,12 +127,7 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
     }
 
     private fun onError() {
-        Toast.makeText(
-            this@DetailsActivity,
-            resources.getString(R.string.network_error),
-            Toast.LENGTH_SHORT
-        ).show()
-
+        Utils.toastNetworkError(this)
         binding.mainView.isVisible = false
         binding.errorView.isVisible = true
     }
@@ -142,31 +148,27 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
 
         binding.itemTitle.text = mWayang.name
         binding.itemDesc.text = mWayang.description
+        val courtesy = "<b>${resources.getString(R.string.courtesy)}:</b> ${mWayang.video}"
+        Utils.setHtmlText(binding.videoSourceInfo, courtesy)
 
-        setupFavoriteFeature()
-        binding.favoriteBtn.setOnClickListener { toggleFavorite(mWayang) }
+        setupFavoriteButton(mWayang.isFavorite == 1)
+        binding.favoriteBtn.setOnClickListener { toggleFavorite() }
 
         binding.mainView.isVisible = true
         binding.errorView.isVisible = false
     }
 
-    private fun setupFavoriteFeature() {
-        favViewModel.isAFavorite(mWayang.id).observe(this) {
-            setupFavoriteButton(it > 0)
-        }
-    }
-
     private fun setupFavoriteButton(isFavorite: Boolean) {
-        tIsFavorite = isFavorite
         binding.favoriteBtn.setImageResource(
             if (isFavorite) R.drawable.ic_baseline_favorite_24
             else R.drawable.ic_baseline_favorite_border_24
         )
     }
 
-    private fun toggleFavorite(item: Wayang) {
-        if (tIsFavorite) favViewModel.deleteFavorite(item)
-        else favViewModel.insertFavorite(item)
+    private fun toggleFavorite() {
+        binding.favoriteBtn.isEnabled = false
+        if (mWayang.isFavorite == 1) viewModel.delFavorite(AppPreference(this).getToken(), mWayang.id)
+        else viewModel.addFavorite(AppPreference(this).getToken(), mWayang.id)
     }
 
     override fun onInitializationSuccess(

@@ -1,34 +1,24 @@
 package com.c22_pc383.wacayang
 
 import android.Manifest
-import android.app.SearchManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.c22_pc383.wacayang.adapter.GridSpacingItemDecoration
-import com.c22_pc383.wacayang.adapter.ListWayangAdapter
-import com.c22_pc383.wacayang.data.Wayang
+import com.c22_pc383.wacayang.data.AppPreference
 import com.c22_pc383.wacayang.databinding.FragmentHomeBinding
-import com.c22_pc383.wacayang.factory.FavoriteViewModelFactory
 import com.c22_pc383.wacayang.factory.WayangViewModelFactory
 import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.c22_pc383.wacayang.helper.Utils
-import com.c22_pc383.wacayang.network.ApiConfig
-import com.c22_pc383.wacayang.network.ApiService
 import com.c22_pc383.wacayang.repository.WayangRepository
-import com.c22_pc383.wacayang.view_model.FavoriteViewModel
 import com.c22_pc383.wacayang.view_model.WayangViewModel
 
 
@@ -62,7 +52,7 @@ class HomeFragment : Fragment(), IGeneralSetup {
         setHasOptionsMenu(true)
 
         viewModel = ViewModelProvider(
-            this, WayangViewModelFactory(WayangRepository.getRepository())
+            this, WayangViewModelFactory(WayangRepository.getDefaultRepository())
         )[WayangViewModel::class.java]
 
         binding.gridRv.apply {
@@ -100,6 +90,8 @@ class HomeFragment : Fragment(), IGeneralSetup {
 
         binding.refreshBtn.setOnClickListener { refresh() }
         binding.scanCard.setOnClickListener { checkCameraPermission() }
+
+        viewModel.getWayangs(AppPreference(requireContext()).getToken(),0)
     }
 
     override fun observerCall() {
@@ -112,18 +104,18 @@ class HomeFragment : Fragment(), IGeneralSetup {
                 binding.progressBar.isVisible = false
 
                 if (it) {
-                    Toast.makeText(
-                        requireContext(),
-                        resources.getString(R.string.network_error),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    binding.errorView.isVisible = true
+                    binding.gridRv.isVisible = false
+
+                    Utils.toastNetworkError(requireContext())
                 }
             }
         }
     }
 
     override fun refresh() {
-        viewModel.getWayangs(0)
+        viewModel.getWayangs(AppPreference(requireContext()).getToken(),0)
+        binding.gridRv.isVisible = false
         binding.errorView.isVisible = false
         binding.progressBar.isVisible = true
     }

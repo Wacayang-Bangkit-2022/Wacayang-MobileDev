@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.c22_pc383.wacayang.adapter.GridSpacingItemDecoration
+import com.c22_pc383.wacayang.data.AppPreference
 import com.c22_pc383.wacayang.data.Wayang
 import com.c22_pc383.wacayang.databinding.ActivitySearchBinding
 import com.c22_pc383.wacayang.factory.WayangViewModelFactory
@@ -41,7 +42,7 @@ class SearchActivity : AppCompatActivity(), IGeneralSetup {
         }
 
         viewModel = ViewModelProvider(
-            this, WayangViewModelFactory(WayangRepository.getRepository())
+            this, WayangViewModelFactory(WayangRepository.getDefaultRepository())
         )[WayangViewModel::class.java]
 
         binding.gridRv.apply {
@@ -51,6 +52,9 @@ class SearchActivity : AppCompatActivity(), IGeneralSetup {
         }
 
         if (intent.getBooleanExtra(VIEW_ALL_EXTRA, false)) viewAll()
+
+        val initKeyword = intent.getStringExtra(INITIAL_SEARCH_KEYWORD)
+        if (initKeyword != null && initKeyword.isNotEmpty()) search(initKeyword)
 
         setup()
         observerCall()
@@ -102,11 +106,7 @@ class SearchActivity : AppCompatActivity(), IGeneralSetup {
             isFindWayangError.observe(this@SearchActivity){
                 onEndLoading()
                 if (it) {
-                    Toast.makeText(
-                        this@SearchActivity,
-                        resources.getString(R.string.network_error),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Utils.toastNetworkError(this@SearchActivity)
                 }
             }
         }
@@ -121,7 +121,7 @@ class SearchActivity : AppCompatActivity(), IGeneralSetup {
 
     private fun search(keyword: String) {
         isViewAll = false
-        viewModel.findWayang(keyword)
+        viewModel.findWayang(AppPreference(this).getToken(), keyword)
 
         onLoading()
     }
@@ -132,7 +132,7 @@ class SearchActivity : AppCompatActivity(), IGeneralSetup {
             isIconified = true
             clearFocus()
         }
-        viewModel.findWayang("", true)
+        viewModel.findWayang(AppPreference(this).getToken(), "", true)
 
         onLoading()
     }
@@ -152,5 +152,6 @@ class SearchActivity : AppCompatActivity(), IGeneralSetup {
 
     companion object {
         const val VIEW_ALL_EXTRA = "view_all_extra"
+        const val INITIAL_SEARCH_KEYWORD = "initial_search_keyword"
     }
 }
