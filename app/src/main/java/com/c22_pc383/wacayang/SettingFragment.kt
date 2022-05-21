@@ -9,6 +9,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.c22_pc383.wacayang.data.AppPreference
 import com.c22_pc383.wacayang.helper.IGeneralSetup
+import com.c22_pc383.wacayang.helper.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -50,12 +51,12 @@ class SettingFragment : PreferenceFragmentCompat(), IGeneralSetup {
         }
 
         signInPref.setOnPreferenceClickListener {
-            signIn()
+            resignIn()
             true
         }
 
         signOutPref.setOnPreferenceClickListener {
-            signOut()
+            promptSignOutDialog()
             true
         }
 
@@ -72,7 +73,7 @@ class SettingFragment : PreferenceFragmentCompat(), IGeneralSetup {
     }
 
     private fun toggleSignStatus() {
-        val hasUser = auth.currentUser != null
+        val hasUser = auth.currentUser != null && !auth.currentUser?.isAnonymous!!
 
         accountPref.isVisible = hasUser
         signOutPref.isVisible = hasUser
@@ -89,20 +90,25 @@ class SettingFragment : PreferenceFragmentCompat(), IGeneralSetup {
         ).show()
     }
 
-    private fun signIn() {
+    private fun resignIn() {
+        signOut()
         startActivity(Intent(requireContext(), LoginActivity::class.java))
         requireActivity().finish()
     }
 
     private fun signOut() {
+        if (Utils.isCurrentUserAnonymous()) auth.currentUser?.delete()
+        auth.signOut()
+        AppPreference(requireContext()).clearToken()
+    }
+
+    private fun promptSignOutDialog() {
         AlertDialog.Builder(requireContext()).apply {
             setTitle(resources.getString(R.string.sign_out))
             setMessage(resources.getString(R.string.confirm_sign_out))
-            setNegativeButton("No", null)
-            setPositiveButton("Yes") { _, _ ->
-                auth.signOut()
-                AppPreference(requireContext()).clearToken()
-                signIn()
+            setNegativeButton(getString(R.string.no), null)
+            setPositiveButton(getString(R.string.yes)) { _, _ ->
+                resignIn()
             }
         }.show()
     }

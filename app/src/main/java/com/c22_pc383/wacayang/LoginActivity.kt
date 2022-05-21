@@ -6,8 +6,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.isVisible
 import com.c22_pc383.wacayang.data.AppPreference
 import com.c22_pc383.wacayang.databinding.ActivityLoginBinding
+import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -17,8 +20,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(), IGeneralSetup {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
 
@@ -29,12 +31,27 @@ class LoginActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
-        auth = Firebase.auth
-        updateSignInData(auth.currentUser)
-
-        setupGoogleSignIn()
+        setup()
     }
 
+    override fun onResume() {
+        super.onResume()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    }
+
+    override fun setup() {
+        auth = Firebase.auth
+        setupGoogleSignIn()
+        setupAnonymousSignIn()
+    }
+
+    override fun enableControl(isEnabled: Boolean) {
+        binding.progressBar.isVisible = !isEnabled
+        binding.guestSignIn.isEnabled = isEnabled
+        binding.googleSignIn.isEnabled = isEnabled
+    }
+
+    // region Google Sign In
     private fun setupGoogleSignIn() {
         // Default web client ID will be generated once the app built
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -44,7 +61,10 @@ class LoginActivity : AppCompatActivity() {
 
         val gsc = GoogleSignIn.getClient(this, gso)
 
-        binding.googleSignIn.setOnClickListener { launchGoogleSignIn.launch(gsc.signInIntent) }
+        binding.googleSignIn.setOnClickListener {
+            enableControl(false)
+            launchGoogleSignIn.launch(gsc.signInIntent)
+        }
     }
 
     private val launchGoogleSignIn = registerForActivityResult(
@@ -55,7 +75,9 @@ class LoginActivity : AppCompatActivity() {
             try {
                 val user = response.getResult(ApiException::class.java)!!
                 authWithGoogle(user.idToken!!)
-            } catch (e: ApiException) { onFailed() }
+            } catch (e: ApiException) {
+                onFailed()
+            }
         }
     }
 
@@ -64,15 +86,36 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { response ->
                 if (response.isSuccessful) {
                     updateSignInData(auth.currentUser)
-                }
-                else onFailed()
+                } else onFailed()
             }
     }
+    // endregion
+
+    // region Anonymous Sign In
+    private fun setupAnonymousSignIn() {
+        binding.guestSignIn.setOnClickListener {
+            enableControl(false)
+            authAnonymously()
+        }
+    }
+
+    private fun authAnonymously() {
+        auth.signInAnonymously()
+            .addOnCompleteListener(this) { response ->
+                if (response.isSuccessful) {
+                    updateSignInData(auth.currentUser)
+                } else onFailed()
+            }
+    }
+    // endregion
 
     private fun updateSignInData(user: FirebaseUser?) {
-        user?.getIdToken(true)?.addOnSuccessListener { result ->
-            AppPreference(this).setToken(result.token!!)
-            onSuccess()
+        user?.getIdToken(true)?.apply {
+            addOnSuccessListener { result ->
+                AppPreference(this@LoginActivity).setToken(result.token!!)
+                onSuccess()
+            }
+            addOnFailureListener { _ -> onFailed() }
         }
     }
 
@@ -83,6 +126,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun onFailed() {
+        enableControl(true)
         Toast.makeText(this, getString(R.string.sign_in_failed), Toast.LENGTH_SHORT).show()
     }
 }

@@ -118,6 +118,28 @@
             android:text="@string/no_favorite" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/lock_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="@dimen/image_icon_dimen"
+            android:layout_height="@dimen/image_icon_dimen"
+            android:src="@drawable/ic_baseline_lock_24"
+            app:tint="@color/secondary_color_1" />
+
+        <TextView
+            style="@style/SubTitle.2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:text="@string/require_login_prompt" />
+    </LinearLayout>
+
     <ProgressBar
         android:visibility="gone"
         android:id="@+id/progress_bar"

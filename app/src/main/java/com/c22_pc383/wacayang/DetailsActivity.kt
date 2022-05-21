@@ -5,14 +5,15 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.c22_pc383.wacayang.adapter.ImageSliderAdapter
 import com.c22_pc383.wacayang.data.AppPreference
 import com.c22_pc383.wacayang.data.Wayang
 import com.c22_pc383.wacayang.databinding.ActivityDetailsBinding
-import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.c22_pc383.wacayang.factory.WayangViewModelFactory
+import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.c22_pc383.wacayang.helper.Utils
 import com.c22_pc383.wacayang.repository.WayangRepository
 import com.c22_pc383.wacayang.view_model.WayangViewModel
@@ -39,6 +40,8 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
             setDisplayShowHomeEnabled(true)
         }
 
+        setResult(DETAILS_RESULT_CODE)
+
         viewModel = ViewModelProvider(
             this, WayangViewModelFactory(WayangRepository.getDefaultRepository())
         )[WayangViewModel::class.java]
@@ -60,6 +63,11 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
     override fun onBackPressed() {
         if (isFullscreen) mYouTubePlayer?.setFullscreen(!isFullscreen)
         else super.onBackPressed()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
     override fun onPause() {
@@ -166,6 +174,11 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
     }
 
     private fun toggleFavorite() {
+        if (Utils.isCurrentUserAnonymous()) {
+            Toast.makeText(this, resources.getString(R.string.require_login_prompt), Toast.LENGTH_SHORT).show()
+            return
+        }
+
         binding.favoriteBtn.isEnabled = false
         if (mWayang.isFavorite == 1) viewModel.delFavorite(AppPreference(this).getToken(), mWayang.id)
         else viewModel.addFavorite(AppPreference(this).getToken(), mWayang.id)
@@ -196,5 +209,6 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
 
     companion object {
         const val WAYANG_ID_EXTRA = "WAYANG_ID_EXTRA"
+        const val DETAILS_RESULT_CODE = 180
     }
 }

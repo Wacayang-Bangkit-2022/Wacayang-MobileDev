@@ -4,6 +4,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -18,6 +19,8 @@ import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.c22_pc383.wacayang.helper.Utils
 import com.c22_pc383.wacayang.repository.WayangRepository
 import com.c22_pc383.wacayang.view_model.WayangViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class FavoriteFragment : Fragment(), IGeneralSetup {
     private lateinit var binding: FragmentFavoriteBinding
@@ -25,6 +28,15 @@ class FavoriteFragment : Fragment(), IGeneralSetup {
     private var isViewAll = true
     private var listItem = ArrayList<Wayang>()
     private var searchView: SearchView? = null
+
+    private val launchDetailsActivity = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == DetailsActivity.DETAILS_RESULT_CODE) {
+            if (isViewAll) viewAll()
+            else search(searchView?.query.toString())
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +49,13 @@ class FavoriteFragment : Fragment(), IGeneralSetup {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
+
+        if (Utils.isCurrentUserAnonymous()) {
+            binding.lockIcon.isVisible = true
+            binding.searchIcon.isVisible = false
+            binding.searchPanel.isVisible = false
+            return
+        }
 
         viewModel = ViewModelProvider(
             this, WayangViewModelFactory(WayangRepository.getDefaultRepository())
@@ -53,6 +72,8 @@ class FavoriteFragment : Fragment(), IGeneralSetup {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        if (Utils.isCurrentUserAnonymous()) return
+
         inflater.inflate(R.menu.search_menu, menu)
 
         val searchManager = requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
@@ -93,6 +114,8 @@ class FavoriteFragment : Fragment(), IGeneralSetup {
     }
 
     private fun search(keyword: String) {
+        if (Utils.isCurrentUserAnonymous()) return
+
         isViewAll = false
         viewModel.getFavWayangs(AppPreference(requireContext()).getToken(), keyword)
         onLoading()
@@ -126,6 +149,6 @@ class FavoriteFragment : Fragment(), IGeneralSetup {
         binding.searchPanel.isVisible = true
         binding.progressBar.isVisible = false
         enableControl(isViewAll)
-        Utils.setupGridListView(requireContext(), binding.gridRv, listItem, binding.errorView, binding.gridRv)
+        Utils.setupGridListView(requireContext(), binding.gridRv, listItem, binding.errorView, binding.gridRv, launchDetailsActivity)
     }
 }

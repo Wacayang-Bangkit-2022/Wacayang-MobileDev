@@ -2,10 +2,12 @@ package com.c22_pc383.wacayang
 
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.os.*
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.postDelayed
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -20,7 +22,7 @@ import com.c22_pc383.wacayang.view_model.WayangViewModel
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.*
+import java.io.File
 import java.util.concurrent.Executors
 
 
@@ -72,6 +74,11 @@ class ConfirmUploadActivity : AppCompatActivity(), IGeneralSetup {
     override fun onBackPressed() {
         startActivity(Intent(this, CameraActivity::class.java))
         super.onBackPressed()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
     override fun onPause() {

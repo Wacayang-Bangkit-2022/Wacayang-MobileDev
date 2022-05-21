@@ -1,13 +1,16 @@
 package com.c22_pc383.wacayang
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.postDelayed
 import com.c22_pc383.wacayang.databinding.ActivitySplashBinding
+import com.c22_pc383.wacayang.service.TokenUpdaterService
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class SplashActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
@@ -20,8 +23,14 @@ class SplashActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
+        startService(Intent(this, TokenUpdaterService::class.java))
+
         handler.postDelayed(WAIT_DELAY) {
-            startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+            if (Firebase.auth.currentUser != null)
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            else
+                startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+
             finish()
         }
     }
@@ -37,6 +46,6 @@ class SplashActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val WAIT_DELAY = 2000L
+        private const val WAIT_DELAY = 1000L
     }
 }

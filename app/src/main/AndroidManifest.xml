@@ -27,6 +27,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wacayang">
+        <service
+            android:name=".service.TokenUpdaterService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".LoginActivity"
             android:exported="false"

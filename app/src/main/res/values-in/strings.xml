@@ -53,4 +53,10 @@
     <string name="sign_in_as">Masuk sebagai %s</string>
 
     <string name="favorite_not_found">Favorit tidak ditemukan</string>
+    <string name="title_slogan">Wacana Wayang</string>
+    <string name="sign_as_guest">Masuk sebagai Tamu</string>
+    <string name="no">Tidak</string>
+    <string name="yes">Iya</string>
+    <string name="failed_renew_token">Gagal memperbarui token. Mohon masuk ulang akun.</string>
+    <string name="require_login_prompt">Akun tamu. Masuk akun Anda dahulu.</string>
 </resources>

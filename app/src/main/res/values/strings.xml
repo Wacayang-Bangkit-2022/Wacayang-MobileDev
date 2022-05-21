@@ -58,4 +58,10 @@
     <string name="sign_in_as">Signed in as %s</string>
 
     <string name="favorite_not_found">Favorite not found</string>
+    <string name="title_slogan">The Wayang Exploration</string>
+    <string name="sign_as_guest">Continue as Guest</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="failed_renew_token">Failed to renew token. Please resign in.</string>
+    <string name="require_login_prompt">You are a guest. Please sign in first.</string>
 </resources>

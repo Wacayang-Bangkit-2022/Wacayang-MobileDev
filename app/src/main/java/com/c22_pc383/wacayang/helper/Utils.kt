@@ -14,17 +14,17 @@ import android.text.Html
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.c22_pc383.wacayang.DetailsActivity
-import com.c22_pc383.wacayang.HomeFragment
 import com.c22_pc383.wacayang.R
-import com.c22_pc383.wacayang.adapter.GridSpacingItemDecoration
 import com.c22_pc383.wacayang.adapter.ListWayangAdapter
 import com.c22_pc383.wacayang.data.Wayang
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -84,7 +84,14 @@ object Utils {
         }
     }
 
-    fun setupGridListView(context: Context, gridRv: RecyclerView, itemList: List<Wayang>, errorView: View, mainView: View) {
+    fun setupGridListView(
+        context: Context,
+        gridRv: RecyclerView,
+        itemList: List<Wayang>,
+        errorView: View,
+        mainView: View,
+        launcher: ActivityResultLauncher<Intent>? = null
+    ) {
         if (itemList.isEmpty()) {
             errorView.isVisible = true
             mainView.isVisible = false
@@ -95,9 +102,15 @@ object Utils {
             gridRv.adapter = ListWayangAdapter(itemList).apply {
                 setOnItemClickCallback(object : ListWayangAdapter.OnItemClickCallback {
                     override fun onItemClicked(item: Wayang, position: Int) {
-                        context.startActivity(Intent(context, DetailsActivity::class.java).apply {
-                            putExtra(DetailsActivity.WAYANG_ID_EXTRA, item.id)
-                        })
+                        if (launcher != null) {
+                            launcher.launch(Intent(context, DetailsActivity::class.java).apply {
+                                putExtra(DetailsActivity.WAYANG_ID_EXTRA, item.id)
+                            })
+                        } else {
+                            context.startActivity(Intent(context, DetailsActivity::class.java).apply {
+                                putExtra(DetailsActivity.WAYANG_ID_EXTRA, item.id)
+                            })
+                        }
                     }
                 })
             }
@@ -150,4 +163,6 @@ object Utils {
             Toast.LENGTH_SHORT
         ).show()
     }
+
+    fun isCurrentUserAnonymous() = Firebase.auth.currentUser?.isAnonymous!!
 }
