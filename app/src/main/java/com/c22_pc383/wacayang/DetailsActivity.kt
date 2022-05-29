@@ -1,13 +1,16 @@
 package com.c22_pc383.wacayang
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.c22_pc383.wacayang.adapter.ImageSliderAdapter
 import com.c22_pc383.wacayang.data.AppPreference
 import com.c22_pc383.wacayang.data.Wayang
@@ -28,6 +31,15 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
     private var mYouTubePlayer: YouTubePlayer? = null
     private var isFullscreen = false
     private lateinit var mWayang: Wayang
+    private var wayangId = -1
+
+    private val launchCommentActivity = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == CommentActivity.COMMENT_UPDATE_RESULT_CODE) {
+            onLoading()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +57,9 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
         viewModel = ViewModelProvider(
             this, WayangViewModelFactory(WayangRepository.getDefaultRepository())
         )[WayangViewModel::class.java]
+
+        wayangId = intent.getIntExtra(WAYANG_ID_EXTRA, -1)
+        if (wayangId == -1) onBackPressed()
 
         setup()
         observerCall()
@@ -67,6 +82,7 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
 
     override fun onResume() {
         super.onResume()
+        mYouTubePlayer?.pause()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
@@ -75,8 +91,18 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
         super.onPause()
     }
 
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+        mYouTubePlayer?.pause()
+    }
+
     override fun setup() {
         onLoading()
+
+        binding.openComment.setOnClickListener { openComment() }
+        binding.viewAllBtn.setOnClickListener { openComment() }
+        binding.recentCommentPanel.setOnClickListener { openComment() }
+
         binding.refreshBtn.setOnClickListener { onLoading() }
         binding.showMoreBtn.let { btn ->
             btn.setOnClickListener {
@@ -126,8 +152,7 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
     }
 
     private fun onLoading() {
-        val id = intent.getIntExtra(WAYANG_ID_EXTRA, -1)
-        viewModel.getWayangDetail(AppPreference(this).getToken(), id.toString())
+        viewModel.getWayangDetail(AppPreference(this).getToken(), wayangId.toString())
 
         binding.progressBar.isVisible = true
         binding.mainView.isVisible = false
@@ -159,6 +184,20 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
         val courtesy = "<b>${resources.getString(R.string.courtesy)}:</b> ${mWayang.video}"
         Utils.setHtmlText(binding.videoSourceInfo, courtesy)
 
+        binding.commentHeader.text = resources.getString(R.string.comment_plural, mWayang.totalComments)
+        val hasComment = mWayang.totalComments > 0
+        if (hasComment) {
+            binding.recentComment.text = mWayang.recentComment
+            Glide.with(this)
+                .load(mWayang.commenterPhoto)
+                .placeholder(Utils.getCircularProgressDrawable(this))
+                .circleCrop()
+                .into(binding.commenterPhoto)
+        }
+        binding.recentCommentPanel.isVisible = hasComment
+        binding.viewAllBtn.isVisible = hasComment
+        binding.openComment.isVisible = !hasComment
+
         setupFavoriteButton(mWayang.isFavorite == 1)
         binding.favoriteBtn.setOnClickListener { toggleFavorite() }
 
@@ -182,6 +221,12 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
         binding.favoriteBtn.isEnabled = false
         if (mWayang.isFavorite == 1) viewModel.delFavorite(AppPreference(this).getToken(), mWayang.id)
         else viewModel.addFavorite(AppPreference(this).getToken(), mWayang.id)
+    }
+
+    private fun openComment() {
+        launchCommentActivity.launch(Intent(this, CommentActivity::class.java).apply {
+            putExtra(WAYANG_ID_EXTRA, wayangId)
+        })
     }
 
     override fun onInitializationSuccess(

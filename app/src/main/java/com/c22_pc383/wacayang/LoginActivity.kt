@@ -1,5 +1,9 @@
 package com.c22_pc383.wacayang
 
+import android.R.attr.label
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,9 +12,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import com.c22_pc383.wacayang.data.AppPreference
 import com.c22_pc383.wacayang.databinding.ActivityLoginBinding
+import com.c22_pc383.wacayang.factory.WayangViewModelFactory
 import com.c22_pc383.wacayang.helper.IGeneralSetup
+import com.c22_pc383.wacayang.helper.Utils
+import com.c22_pc383.wacayang.repository.WayangRepository
+import com.c22_pc383.wacayang.view_model.WayangViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -20,9 +29,11 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
+
 class LoginActivity : AppCompatActivity(), IGeneralSetup {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
+    private lateinit var viewModel: WayangViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +42,12 @@ class LoginActivity : AppCompatActivity(), IGeneralSetup {
 
         supportActionBar?.hide()
 
+        viewModel = ViewModelProvider(
+            this, WayangViewModelFactory(WayangRepository.getDefaultRepository())
+        )[WayangViewModel::class.java]
+
         setup()
+        observerCall()
     }
 
     override fun onResume() {
@@ -43,6 +59,13 @@ class LoginActivity : AppCompatActivity(), IGeneralSetup {
         auth = Firebase.auth
         setupGoogleSignIn()
         setupAnonymousSignIn()
+    }
+
+    override fun observerCall() {
+        viewModel.isSignUserError.observe(this) {
+            if (it) onFailed()
+            else onSuccess()
+        }
     }
 
     override fun enableControl(isEnabled: Boolean) {
@@ -78,7 +101,7 @@ class LoginActivity : AppCompatActivity(), IGeneralSetup {
             } catch (e: ApiException) {
                 onFailed()
             }
-        }
+        } else { onFailed() }
     }
 
     private fun authWithGoogle(token: String) {
@@ -88,6 +111,8 @@ class LoginActivity : AppCompatActivity(), IGeneralSetup {
                     updateSignInData(auth.currentUser)
                 } else onFailed()
             }
+            .addOnFailureListener { onFailed() }
+            .addOnCanceledListener { onFailed() }
     }
     // endregion
 
@@ -106,6 +131,8 @@ class LoginActivity : AppCompatActivity(), IGeneralSetup {
                     updateSignInData(auth.currentUser)
                 } else onFailed()
             }
+            .addOnFailureListener { onFailed() }
+            .addOnCanceledListener { onFailed() }
     }
     // endregion
 
@@ -113,14 +140,20 @@ class LoginActivity : AppCompatActivity(), IGeneralSetup {
         user?.getIdToken(true)?.apply {
             addOnSuccessListener { result ->
                 AppPreference(this@LoginActivity).setToken(result.token!!)
-                onSuccess()
+                signUser(result.token!!)
             }
-            addOnFailureListener { _ -> onFailed() }
+            addOnFailureListener { onFailed() }
+            addOnCanceledListener { onFailed() }
         }
     }
 
+    private fun signUser(token: String) {
+        if (Utils.isCurrentUserAnonymous()) onSuccess()
+        else viewModel.signUser(token)
+    }
+
     private fun onSuccess() {
-        Log.d("Hello", AppPreference(this).getToken())
+        copyToken()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
@@ -128,5 +161,16 @@ class LoginActivity : AppCompatActivity(), IGeneralSetup {
     private fun onFailed() {
         enableControl(true)
         Toast.makeText(this, getString(R.string.sign_in_failed), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun copyToken() {
+        if (BuildConfig.DEBUG) {
+            val label = "Debug Token"
+            val token = "Bearer ${AppPreference(this).getToken()}"
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val data = ClipData.newPlainText(label, token)
+            clipboard.setPrimaryClip(data)
+            Log.d(label, token)
+        }
     }
 }

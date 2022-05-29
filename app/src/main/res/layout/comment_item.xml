@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:clickable="true"
+    android:background="?attr/selectableItemBackground"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="16dp"
+    android:focusable="true">
+
+    <ImageView
+        android:id="@+id/item_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="24dp"
+        android:src="@drawable/ic_baseline_account_circle_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/comment_section"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/item_image"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/item_title"
+                    style="@style/TitleText.3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/item_title" />
+
+                <TextView
+                    android:id="@+id/item_subtitle"
+                    style="@style/SubTitle.2"
+                    android:textColor="@color/disabled_color_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/item_title" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/trash_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_baseline_delete_24"
+                android:visibility="visible"
+                app:tint="@color/disabled_color_1" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/item_desc"
+            style="@style/SubTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/item_desc" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/disabled_color_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/comment_section" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

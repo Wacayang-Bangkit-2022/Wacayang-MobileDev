@@ -6,6 +6,12 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
+
+    @GET("sign")
+    suspend fun signUser(
+        @Header("Authorization") token: String
+    ): Response<SignUserResponse>
+
     @GET("wayangs")
     suspend fun getWayangs(
         @Header("Authorization") token: String,
@@ -31,13 +37,13 @@ interface ApiService {
         @Part file: MultipartBody.Part
     ): Response<WayangPredictResponse>
 
-    @GET("add-favorite")
+    @POST("add-favorite")
     suspend fun addFavorite(
         @Header("Authorization") token: String,
         @Query("wayang") itemId: Int
     ): Response<AlterFavResponse>
 
-    @GET("del-favorite")
+    @POST("del-favorite")
     suspend fun delFavorite(
         @Header("Authorization") token: String,
         @Query("wayang") itemId: Int
@@ -48,4 +54,23 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("name") query: String?
     ): Response<FavoriteResponse>
+
+    @POST("add-comment")
+    suspend fun addComment(
+        @Header("Authorization") token: String,
+        @Query("wayang") itemId: Int,
+        @Query("comment") content: String
+    ): Response<AddCommentResponse>
+
+    @POST("del-comment")
+    suspend fun delComment(
+        @Header("Authorization") token: String,
+        @Query("comment") itemId: Int
+    ): Response<DelCommentResponse>
+
+    @GET("comments")
+    suspend fun getComments(
+        @Header("Authorization") token: String,
+        @Query("wayang") itemId: Int
+    ): Response<CommentResponse>
 }

@@ -3,7 +3,7 @@
     <string name="setting">Pengaturan</string>
     <string name="language">Bahasa</string>
     <string name="about">Tentang Aplikasi</string>
-    <string name="about_app">Aplikasi ini dibuat oleh tim C22-383 Bangkit 2022. Versi: v1.0</string>
+    <string name="about_app">Aplikasi ini dibuat oleh tim C22-PC383 Bangkit 2022. Versi: v1.0</string>
 
     <string name="camera_failed">Gagal mengoperasikan kamera</string>
     <string name="permission_denied">Izin tidak diberikan</string>
@@ -59,4 +59,8 @@
     <string name="yes">Iya</string>
     <string name="failed_renew_token">Gagal memperbarui token. Mohon masuk ulang akun.</string>
     <string name="require_login_prompt">Akun tamu. Masuk akun Anda dahulu.</string>
+    <string name="no_comments_found">Tidak ada komentar.</string>
+    <string name="comment_plural">Komentar (%1$d)</string>
+    <string name="comment_title">Komentar</string>
+    <string name="post_comment">Post Komentar</string>
 </resources>

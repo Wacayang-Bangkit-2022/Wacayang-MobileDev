@@ -27,11 +27,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wacayang">
+        <activity
+            android:name=".CommentActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <service
             android:name=".service.TokenUpdaterService"
             android:enabled="true"
-            android:exported="true"></service>
-
+            android:exported="true" />
         <activity
             android:name=".LoginActivity"
             android:exported="false"

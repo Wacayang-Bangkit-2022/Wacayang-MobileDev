@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.c22_pc383.wacayang.data.Comment
 import com.c22_pc383.wacayang.data.Wayang
 import com.c22_pc383.wacayang.data.WayangPredictResponse
 import com.c22_pc383.wacayang.helper.Utils
@@ -12,6 +13,11 @@ import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 
 class WayangViewModel(private val repository: WayangRepository): ViewModel() {
+    // region Sign User
+    private var _isSignUserError = MutableLiveData<Boolean>()
+    val isSignUserError: LiveData<Boolean> = _isSignUserError
+    // endregion
+
     // region Get Wayang List
     private var _listWayang = MutableLiveData<List<Wayang>>()
     val listWayang: LiveData<List<Wayang>> = _listWayang
@@ -57,6 +63,30 @@ class WayangViewModel(private val repository: WayangRepository): ViewModel() {
     private var _isDelFavError = MutableLiveData<Boolean>()
     val isDelFavError: LiveData<Boolean> = _isDelFavError
     // endregion
+
+    // region Comments
+    private var _listComment = MutableLiveData<List<Comment>>()
+    val listComment: LiveData<List<Comment>> = _listComment
+
+    private var _isGetCommentError = MutableLiveData<Boolean>()
+    val isGetCommentError: LiveData<Boolean> = _isGetCommentError
+
+    private var _isAddCommentError = MutableLiveData<Boolean>()
+    val isAddCommentError: LiveData<Boolean> = _isAddCommentError
+
+    private var _isDelCommentError = MutableLiveData<Boolean>()
+    val isDelCommentError: LiveData<Boolean> = _isDelCommentError
+    // endregion
+
+    fun signUser(token: String) = viewModelScope.launch {
+        try {
+            val response = repository.signUser(Utils.formatBearerToken(token))
+            _isSignUserError.postValue(!response.isSuccessful)
+        } catch (e: Exception) {
+            _isSignUserError.postValue(true)
+            e.printStackTrace()
+        }
+    }
 
     fun getWayangs(token: String, page: Int) = viewModelScope.launch {
         try {
@@ -149,6 +179,39 @@ class WayangViewModel(private val repository: WayangRepository): ViewModel() {
             _isDelFavError.postValue(!response.isSuccessful)
         } catch (e: Exception) {
             _isDelFavError.postValue(true)
+            e.printStackTrace()
+        }
+    }
+
+    fun getComments(token: String, itemId: Int) = viewModelScope.launch {
+        try {
+            val response = repository.getComments(Utils.formatBearerToken(token), itemId)
+            if (response.isSuccessful) {
+                _listComment.postValue(response.body()!!.comments)
+            }
+            _isGetCommentError.postValue(!response.isSuccessful)
+        } catch (e: Exception) {
+            _isGetCommentError.postValue(true)
+            e.printStackTrace()
+        }
+    }
+
+    fun addComment(token: String, itemId: Int, content: String) = viewModelScope.launch {
+        try {
+            val response = repository.addComment(Utils.formatBearerToken(token), itemId, content)
+            _isAddCommentError.postValue(!response.isSuccessful)
+        } catch (e: Exception) {
+            _isAddCommentError.postValue(true)
+            e.printStackTrace()
+        }
+    }
+
+    fun delComment(token: String, itemId: Int) = viewModelScope.launch {
+        try {
+            val response = repository.delComment(Utils.formatBearerToken(token), itemId)
+            _isDelCommentError.postValue(!response.isSuccessful)
+        } catch (e: Exception) {
+            _isDelCommentError.postValue(true)
             e.printStackTrace()
         }
     }

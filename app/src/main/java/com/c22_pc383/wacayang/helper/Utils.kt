@@ -11,6 +11,7 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.text.Html
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -38,6 +39,14 @@ object Utils {
             timeStamp, ".jpg",
             context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         )
+    }
+
+    fun clearTempFiles(context: Context) {
+        try {
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.deleteRecursively()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun convertUriToFile(selectedImg: Uri, ctx: Context): File {
@@ -146,6 +155,22 @@ object Utils {
     fun splitImageUrls(combinedUrl: String): List<String> = combinedUrl.split(",")
 
     fun getYoutubeVideoId(url: String): String = url.substringAfter("https://youtu.be/")
+
+    fun convertToLocalDateTime(dateStr: String): String {
+        return try {
+            val sourceFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000'Z'", Locale.ENGLISH)
+            sourceFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+            val date = sourceFormat.parse(dateStr) as Date
+            val desiredFormat = SimpleDateFormat("MMM dd, yyyy HH:mm a", Locale.ENGLISH)
+            desiredFormat.timeZone = TimeZone.getDefault()
+
+            desiredFormat.format(date)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            "Unknown"
+        }
+    }
 
     fun setHtmlText(textView: TextView, str: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)

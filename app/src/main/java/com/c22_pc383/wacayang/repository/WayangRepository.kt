@@ -5,6 +5,8 @@ import com.c22_pc383.wacayang.network.ApiService
 import okhttp3.MultipartBody
 
 class WayangRepository(private val apiService: ApiService) {
+    suspend fun signUser(token: String) = apiService.signUser(token)
+
     suspend fun getWayangs(token: String, page: String) = apiService.getWayangs(token, page)
     suspend fun findWayang(token: String, query: String) = apiService.findWayang(token, query)
     suspend fun getWayangDetail(token: String, query: String) = apiService.getWayangDetail(token, query)
@@ -13,6 +15,10 @@ class WayangRepository(private val apiService: ApiService) {
     suspend fun addFavorite(token: String, itemId: Int) = apiService.addFavorite(token, itemId)
     suspend fun delFavorite(token: String, itemId: Int) = apiService.delFavorite(token, itemId)
     suspend fun getFavorites(token: String, query: String?) = apiService.getFavorites(token, query)
+
+    suspend fun addComment(token: String, itemId: Int, content: String) = apiService.addComment(token, itemId, content)
+    suspend fun delComment(token: String, itemId: Int) = apiService.delComment(token, itemId)
+    suspend fun getComments(token: String, itemId: Int) = apiService.getComments(token, itemId)
 
     companion object {
         @Volatile

@@ -79,13 +79,13 @@ class SettingFragment : PreferenceFragmentCompat(), IGeneralSetup {
         signOutPref.isVisible = hasUser
         signInPref.isVisible = !hasUser
 
-        if (hasUser) accountPref.title = auth.currentUser?.email.toString()
+        if (hasUser) accountPref.title = auth.currentUser?.displayName.toString()
     }
 
     private fun accountInfo() {
         Toast.makeText(
             requireContext(),
-            resources.getString(R.string.sign_in_as, auth.currentUser?.email.toString()),
+            resources.getString(R.string.sign_in_as, auth.currentUser?.displayName.toString()),
             Toast.LENGTH_SHORT
         ).show()
     }

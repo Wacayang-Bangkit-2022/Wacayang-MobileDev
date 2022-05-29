@@ -26,12 +26,19 @@ data class Wayang(
     var video: String,
 
     @field:SerializedName("is_favorite")
-    var isFavorite: Int = 0
+    var isFavorite: Int = 0,
+
+    @field:SerializedName("total_comments")
+    var totalComments: Int = 0,
+
+    @field:SerializedName("recent_comment")
+    var recentComment: String = "",
+
+    @field:SerializedName("commenter_photo")
+    var commenterPhoto: String = ""
 
 ) : Parcelable {
     companion object {
         const val FAV_TABLE = "favorite_wayang"
     }
 }
-
-

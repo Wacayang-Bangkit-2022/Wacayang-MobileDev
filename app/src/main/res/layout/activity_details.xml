@@ -137,10 +137,101 @@
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="24dp"
                 android:text="@string/courtesy"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/youtube_fragment" />
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/margin_small"
+                android:layout_marginTop="16dp"
+                android:background="@color/disabled_color_2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/video_source_info" />
+
+            <LinearLayout
+                android:id="@+id/comment_header_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center"
+                android:weightSum="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view2">
+
+                <TextView
+                    android:id="@+id/comment_header"
+                    style="@style/TitleText.2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/comment_plural" />
+
+                <Button
+                    android:id="@+id/view_all_btn"
+                    style="@style/Button.Chip"
+                    android:text="@string/more" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/open_comment"
+                style="@style/Button"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
+                android:text="@string/post_comment"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/comment_header_holder" />
+
+            <LinearLayout
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:id="@+id/recent_comment_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/margin_large"
+                android:paddingTop="@dimen/margin_medium"
+                android:paddingEnd="@dimen/margin_large"
+                android:paddingBottom="@dimen/margin_medium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/comment_header_holder">
+
+                <ImageView
+                    android:id="@+id/commenter_photo"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_baseline_account_circle_24" />
+
+                <TextView
+                    android:gravity="center_vertical"
+                    android:id="@+id/recent_comment"
+                    style="@style/SubTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/margin_medium"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="@string/item_desc" />
+
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

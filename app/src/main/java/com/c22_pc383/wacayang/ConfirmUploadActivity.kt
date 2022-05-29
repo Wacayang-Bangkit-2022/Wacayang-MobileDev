@@ -88,6 +88,7 @@ class ConfirmUploadActivity : AppCompatActivity(), IGeneralSetup {
 
     override fun onDestroy() {
         super.onDestroy()
+        Utils.clearTempFiles(this)
         handler.removeCallbacksAndMessages(null)
     }
 
