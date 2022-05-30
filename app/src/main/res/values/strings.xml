@@ -69,4 +69,8 @@
     <string name="comment_plural">Comments (%1$d)</string>
     <string name="comment_title">Comments</string>
     <string name="post_comment">Post Comments</string>
+
+    <string name="confirm_deletion">Confirm Deletion</string>
+    <string name="delete_comment_confirmation">Delete your comment?</string>
+    <string name="no_data">No data.</string>
 </resources>

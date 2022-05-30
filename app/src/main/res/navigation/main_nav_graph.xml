@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/setting_fragment"
-        android:name="com.c22_pc383.wacayang.SettingFragment"
+        android:name="com.c22_pc383.wacayang.ProfileFragment"
         android:label="@string/setting"
         tools:layout="@layout/fragment_setting" />
 </navigation>

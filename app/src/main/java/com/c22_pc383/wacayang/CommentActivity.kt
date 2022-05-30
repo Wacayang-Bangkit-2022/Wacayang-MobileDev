@@ -3,13 +3,11 @@ package com.c22_pc383.wacayang
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.c22_pc383.wacayang.adapter.GridSpacingItemDecoration
 import com.c22_pc383.wacayang.adapter.ListCommentAdapter
 import com.c22_pc383.wacayang.data.AppPreference
 import com.c22_pc383.wacayang.data.Comment
@@ -150,12 +148,23 @@ class CommentActivity : AppCompatActivity(), IGeneralSetup {
             binding.commentRv.adapter = ListCommentAdapter(listItem).apply {
                 setOnItemClickCallback(object : ListCommentAdapter.OnItemClickCallback {
                     override fun onItemClicked(item: Comment, position: Int) {
-                        enableControl(false)
-                        viewModel.delComment(AppPreference(this@CommentActivity).getToken(), item.commentId)
+                        promptDeleteCommentDialogue(item.commentId)
                     }
                 })
             }
         }
+    }
+
+    private fun promptDeleteCommentDialogue(commentId: Int) {
+        AlertDialog.Builder(this).apply {
+            setTitle(getString(R.string.confirm_deletion))
+            setMessage(getString(R.string.delete_comment_confirmation))
+            setNegativeButton(getString(R.string.no), null)
+            setPositiveButton(getString(R.string.yes)) { _, _ ->
+                enableControl(false)
+                viewModel.delComment(AppPreference(this@CommentActivity).getToken(), commentId)
+            }
+        }.show()
     }
 
     companion object {

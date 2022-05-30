@@ -7,7 +7,7 @@ import retrofit2.http.*
 
 interface ApiService {
 
-    @GET("sign")
+    @POST("sign")
     suspend fun signUser(
         @Header("Authorization") token: String
     ): Response<SignUserResponse>

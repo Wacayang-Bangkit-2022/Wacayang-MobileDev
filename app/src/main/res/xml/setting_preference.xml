@@ -2,11 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Preference
-        android:key="@string/account"
-        android:title="@string/account"
-        android:icon="@drawable/ic_baseline_account_circle_24" />
-
-    <Preference
         android:key="@string/sign_in"
         android:title="@string/sign_in"
         android:icon="@drawable/ic_baseline_login_24" />

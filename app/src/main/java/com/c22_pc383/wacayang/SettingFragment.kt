@@ -3,7 +3,6 @@ package com.c22_pc383.wacayang
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -16,7 +15,6 @@ import com.google.firebase.ktx.Firebase
 
 class SettingFragment : PreferenceFragmentCompat(), IGeneralSetup {
     private lateinit var auth: FirebaseAuth
-    private lateinit var accountPref: Preference
     private lateinit var signOutPref: Preference
     private lateinit var signInPref: Preference
 
@@ -31,7 +29,6 @@ class SettingFragment : PreferenceFragmentCompat(), IGeneralSetup {
         val langPref = findPreference<Preference> (resources.getString(R.string.language)) as Preference
         val aboutPref = findPreference<Preference> (resources.getString(R.string.about)) as Preference
 
-        accountPref = findPreference<Preference>(resources.getString(R.string.account)) as Preference
         signInPref = findPreference<Preference>(resources.getString(R.string.sign_in)) as Preference
         signOutPref = findPreference<Preference>(resources.getString(R.string.sign_out)) as Preference
 
@@ -42,11 +39,6 @@ class SettingFragment : PreferenceFragmentCompat(), IGeneralSetup {
 
         aboutPref.setOnPreferenceClickListener {
             toggleAbout()
-            true
-        }
-
-        accountPref.setOnPreferenceClickListener {
-            accountInfo()
             true
         }
 
@@ -75,19 +67,8 @@ class SettingFragment : PreferenceFragmentCompat(), IGeneralSetup {
     private fun toggleSignStatus() {
         val hasUser = auth.currentUser != null && !auth.currentUser?.isAnonymous!!
 
-        accountPref.isVisible = hasUser
         signOutPref.isVisible = hasUser
         signInPref.isVisible = !hasUser
-
-        if (hasUser) accountPref.title = auth.currentUser?.displayName.toString()
-    }
-
-    private fun accountInfo() {
-        Toast.makeText(
-            requireContext(),
-            resources.getString(R.string.sign_in_as, auth.currentUser?.displayName.toString()),
-            Toast.LENGTH_SHORT
-        ).show()
     }
 
     private fun resignIn() {

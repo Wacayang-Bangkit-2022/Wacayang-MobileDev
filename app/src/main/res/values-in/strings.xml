@@ -63,4 +63,7 @@
     <string name="comment_plural">Komentar (%1$d)</string>
     <string name="comment_title">Komentar</string>
     <string name="post_comment">Post Komentar</string>
+    <string name="confirm_deletion">Konfirmasi Hapus</string>
+    <string name="delete_comment_confirmation">Hapus komentar Anda?</string>
+    <string name="no_data">Tidak ada data.</string>
 </resources>
