@@ -33,14 +33,6 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
     private lateinit var mWayang: Wayang
     private var wayangId = -1
 
-    private val launchCommentActivity = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == CommentActivity.COMMENT_UPDATE_RESULT_CODE) {
-            onLoading()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailsBinding.inflate(layoutInflater)
@@ -51,6 +43,7 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
         }
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         setResult(DETAILS_RESULT_CODE)
 
@@ -221,6 +214,14 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
         binding.favoriteBtn.isEnabled = false
         if (mWayang.isFavorite == 1) viewModel.delFavorite(AppPreference(this).getToken(), mWayang.id)
         else viewModel.addFavorite(AppPreference(this).getToken(), mWayang.id)
+    }
+
+    private val launchCommentActivity = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == CommentActivity.COMMENT_UPDATE_RESULT_CODE) {
+            onLoading()
+        }
     }
 
     private fun openComment() {

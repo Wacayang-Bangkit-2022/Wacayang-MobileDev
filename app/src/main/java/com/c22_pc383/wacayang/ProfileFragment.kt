@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.c22_pc383.wacayang.databinding.FragmentProfileBinding
@@ -27,6 +28,7 @@ class ProfileFragment : Fragment(), IGeneralSetup {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         childFragmentManager.beginTransaction().replace(R.id.child_fragment, SettingFragment()).commit()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         setup()
     }
 

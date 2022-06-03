@@ -25,7 +25,6 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.util.concurrent.Executors
 
-
 class ConfirmUploadActivity : AppCompatActivity(), IGeneralSetup {
     private lateinit var binding: ActivityConfirmUploadBinding
     private lateinit var viewModel: WayangViewModel
@@ -35,18 +34,12 @@ class ConfirmUploadActivity : AppCompatActivity(), IGeneralSetup {
     private val compressExecutor = Executors.newFixedThreadPool(1)
     private val handler = Handler(Looper.getMainLooper())
 
-    private val imageCompressListener: Utils.CompressImageTask.ICompressListener =
-        object : Utils.CompressImageTask.ICompressListener {
-            override fun onComplete(compressedFile: File) {
-                beginUpload(compressedFile)
-            }
-        }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityConfirmUploadBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         supportActionBar?.apply {
             title = getString(R.string.confirm_upload)
             setDisplayHomeAsUpEnabled(true)
@@ -119,6 +112,13 @@ class ConfirmUploadActivity : AppCompatActivity(), IGeneralSetup {
             progressBar.isVisible = !isEnabled
         }
     }
+
+    private val imageCompressListener: Utils.CompressImageTask.ICompressListener =
+        object : Utils.CompressImageTask.ICompressListener {
+            override fun onComplete(compressedFile: File) {
+                beginUpload(compressedFile)
+            }
+        }
 
     private fun onBeforeUpload(file: File) {
         enableControl(false)

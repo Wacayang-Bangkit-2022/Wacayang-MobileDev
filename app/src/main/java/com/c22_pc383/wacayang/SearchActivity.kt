@@ -40,6 +40,7 @@ class SearchActivity : AppCompatActivity(), IGeneralSetup {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
         }
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         viewModel = ViewModelProvider(
             this, WayangViewModelFactory(WayangRepository.getDefaultRepository())

@@ -1,12 +1,7 @@
 package com.c22_pc383.wacayang
 
-import android.R.attr.label
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -41,6 +36,7 @@ class LoginActivity : AppCompatActivity(), IGeneralSetup {
         setContentView(binding.root)
 
         supportActionBar?.hide()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         viewModel = ViewModelProvider(
             this, WayangViewModelFactory(WayangRepository.getDefaultRepository())
@@ -153,24 +149,15 @@ class LoginActivity : AppCompatActivity(), IGeneralSetup {
     }
 
     private fun onSuccess() {
-        copyToken()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
     private fun onFailed() {
+        if (Utils.isCurrentUserAnonymous()) auth.currentUser?.delete()
+        auth.signOut()
+
         enableControl(true)
         Toast.makeText(this, getString(R.string.sign_in_failed), Toast.LENGTH_SHORT).show()
-    }
-
-    private fun copyToken() {
-        if (BuildConfig.DEBUG) {
-            val label = "Debug Token"
-            val token = "Bearer ${AppPreference(this).getToken()}"
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val data = ClipData.newPlainText(label, token)
-            clipboard.setPrimaryClip(data)
-            Log.d(label, token)
-        }
     }
 }

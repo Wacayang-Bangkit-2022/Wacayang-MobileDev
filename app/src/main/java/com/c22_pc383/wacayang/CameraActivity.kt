@@ -33,19 +33,12 @@ class CameraActivity : AppCompatActivity(), IGeneralSetup {
     private var imgCapture: ImageCapture? = null
     private var isFlashOn = false
 
-    private val launcherIntentGallery = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val chosenImage: Uri = result.data?.data as Uri
-            onCaptureImageSuccess(Utils.convertUriToFile(chosenImage, this), false)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         setup()
     }
@@ -112,6 +105,15 @@ class CameraActivity : AppCompatActivity(), IGeneralSetup {
                     bindToLifecycle(this@CameraActivity, camSelector, preview, imgCapture) }
             } catch (exc: Exception) { onCameraError() }
         }, ContextCompat.getMainExecutor(this@CameraActivity))
+    }
+
+    private val launcherIntentGallery = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val chosenImage: Uri = result.data?.data as Uri
+            onCaptureImageSuccess(Utils.convertUriToFile(chosenImage, this), false)
+        }
     }
 
     private fun openGallery() {

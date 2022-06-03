@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.c22_pc383.wacayang.data.AppPreference
 import com.c22_pc383.wacayang.data.Comment
 import com.c22_pc383.wacayang.databinding.CommentItemBinding
 import com.c22_pc383.wacayang.helper.Utils

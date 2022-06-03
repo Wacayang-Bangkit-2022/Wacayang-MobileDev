@@ -3,7 +3,6 @@ package com.c22_pc383.wacayang.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import android.util.Log
 import android.widget.Toast
 import com.c22_pc383.wacayang.R
 import com.c22_pc383.wacayang.data.AppPreference

@@ -11,7 +11,6 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.text.Html
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast

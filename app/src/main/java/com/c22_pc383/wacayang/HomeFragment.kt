@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -26,19 +27,6 @@ class HomeFragment : Fragment(), IGeneralSetup {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var viewModel: WayangViewModel
 
-    private val launchCameraPermission = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { result ->
-        if (result) openCamera()
-        else {
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.permission_denied),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,6 +38,8 @@ class HomeFragment : Fragment(), IGeneralSetup {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         viewModel = ViewModelProvider(
             this, WayangViewModelFactory(WayangRepository.getDefaultRepository())
@@ -128,6 +118,19 @@ class HomeFragment : Fragment(), IGeneralSetup {
         ) {
             launchCameraPermission.launch(Manifest.permission.CAMERA)
         } else openCamera()
+    }
+
+    private val launchCameraPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { result ->
+        if (result) openCamera()
+        else {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.permission_denied),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     private fun openCamera() {
