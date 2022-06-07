@@ -9,7 +9,7 @@
 ## About
 Wacayang is a mobile application that able to identify Indonesian wayang kulit characters. This app uses images uploaded by the user as input, and the information about the name, description, image, and related video about the identified wayang character will be displayed on the app.
 
-## Android APK File
+## Android APK File (Minimum Android SDK 21)
 Link: https://drive.google.com/file/d/17EXgCPaWJuxIVNsX-qUjfb0lgfdHY-oy/view?usp=sharing<br/>
 Alternative Link: https://drive.google.com/file/d/1hXyMuBRKxxPgjiQkxqbVkO4Q_6UlPJuB/view?usp=sharing
 
@@ -57,6 +57,11 @@ Wacayang Android app is developed using Android Studio IDE. Here are components 
 * [BottomNavigation](https://developer.android.com/reference/com/google/android/material/bottomnavigation/BottomNavigationView) to navigate between main menus (Home, Favorite, and Settings).
 * Connected to [Firebase Auth](https://firebase.google.com/docs/auth) for Google and anonymous sign in.
 * Utilize [LiveData](https://developer.android.com/topic/libraries/architecture/livedata), [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel), and [Repository](https://developer.android.com/codelabs/basic-android-kotlin-training-repository-pattern) pattern for Single Source of Truth (SSOT)
+
+### Requirements
+* Android Studio Bumblebee 2021.1.1 Patch 2
+* Minimum Android SDK 21
+
 ### Workflow
 #### 1. Clone The Project and Open It in Android Studio
 ```
@@ -78,14 +83,14 @@ keytool -list -v -keystore <your keystore path> -alias <your alias>
 After you open the project, wait for the Gradle to finish building first. Then you can choose to build debug app by using `Run -> Run'app'`. Or you can build signed App by head to `Build -> Generate Signed Bundle/APK`.
 
 ## Cloud Computing Project Installation
-### Components
+### Components and Requirements
 * SQL database running on Google Cloud Platform
 * REST API developed using Node.JS, Express, and Flask.
 * Deployed REST API running as service on Google Cloud Run.
 ### Workflow
 #### 1. Clone The Project and Open It in Your Favorite IDE
 ```
-git clone https://github.com/Wacayang-Bangkit-2022/Wacayang-CloudComputing.git
+git clone https://github.com/Wacayang-Bangkit-2022/Wacayang_CloudComputing.git
 ```
 #### 2. Get Service Account Key from Firebase
 * Open your last Firebase project used for Android Studio project installation
@@ -128,10 +133,10 @@ https://documenter.getpostman.com/view/20994859/UyxqDPV6
 * Model Evaluate
 * Accuracy and Loss Graph
 ### Requirements
-1. [Google Colaboratory](https://colab.research.google.com/) or [Jupyter Notebook](https://jupyter.org/install).
-2. Kaggle API Token.
-3. Latest Tensorflow Version 2.8.2.
-4. Python Version 3.6 or above.
+* [Google Colaboratory](https://colab.research.google.com/) or [Jupyter Notebook](https://jupyter.org/install).
+* Kaggle API Token.
+* Latest Tensorflow Version 2.8.2.
+* Python Version 3.6 or above.
 
 ### Dataset
 * [Wayang Image Dataset](https://www.kaggle.com/datasets/bayuokta/wayang-bagong-cepot-gareng-petruk-semar)
