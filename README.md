@@ -1,11 +1,22 @@
 # Wacayang, Indonesian Wayang App
 
+## Team C22-PC383 Contributors
+* Nauval Muhammad Firdaus (A2005F0453) - [GitHub@NauvalNC](https://github.com/NauvalNC) - Mobile Development - Universitas Bina Nusantara
+* Fahrizza Irham Taufany (M2116L1465) - [GitHub@fahrizzairham](https://github.com/fahrizzairham) - Machine Learning - Institut Teknologi Kalimantan
+* Muhammad Izzah Alfatih (M2012F1299) - [GitHub@IzzahAlfatih](https://github.com/IzzahAlfatih) - Machine Learning - Universitas Telkom
+* Dimas Aji Permadi (C2152F1678) - [GitHub@DimasAji1999](https://github.com/DimasAji1999) - Cloud Computing - Sekolah Tinggi Teknologi Bandung
+
+## About
+Wacayang is a mobile application that able to identify Indonesian wayang kulit characters. This app uses images uploaded by the user as input, and the information about the name, description, image, and related video about the identified wayang character will be displayed on the app.
+
 ## Android APK File
 Link: https://drive.google.com/file/d/17EXgCPaWJuxIVNsX-qUjfb0lgfdHY-oy/view?usp=sharing<br/>
 Alternative Link: https://drive.google.com/file/d/1hXyMuBRKxxPgjiQkxqbVkO4Q_6UlPJuB/view?usp=sharing
 
-## About
-Wacayang is a mobile application that able to identify Indonesian wayang kulit characters. This app uses images uploaded by the user as input, and the information about the name, description, image, and related video about the identified wayang character will be displayed on the app.
+## REST API Documentation
+```
+https://documenter.getpostman.com/view/20994859/UyxqDPV6
+```
 
 ## App Features
 ![Feature 1](https://github.com/Wacayang-Bangkit-2022/Wacayang-Documentation/blob/main/assets/feature%20(1).png)
@@ -65,3 +76,77 @@ keytool -list -v -keystore <your keystore path> -alias <your alias>
 * Download the `google-service.json` from your Firebase Console, and copy it to the `app` folder of your Android Studio project.
 #### 3. Run or Build The App
 After you open the project, wait for the Gradle to finish building first. Then you can choose to build debug app by using `Run -> Run'app'`. Or you can build signed App by head to `Build -> Generate Signed Bundle/APK`.
+
+## Cloud Computing Project Installation
+### Components
+* SQL database running on Google Cloud Platform
+* REST API developed using Node.JS, Express, and Flask.
+* Deployed REST API running as service on Google Cloud Run.
+### Workflow
+#### 1. Clone The Project and Open It in Your Favorite IDE
+```
+git clone https://github.com/Wacayang-Bangkit-2022/Wacayang-CloudComputing.git
+```
+#### 2. Get Service Account Key from Firebase
+* Open your last Firebase project used for Android Studio project installation
+* Go to `Project Settings -> Service Accounts`
+* Choose `Generate New Private Key`, and your private key JSON file will be downloaded.
+* Rename your private key as `serviceAccountKey.json`
+* Copy that file to your cloned project, both inside `wacayang_general_api` and `wacayang_ai_api` folder.
+#### 3. Create SQL Instance on GCP
+* Open your Cloud Console, head to `SQL -> MySQL -> Create New Instance`
+* Create new database on your newly created SQL instance.
+* Create necessary tables as showed on this schema below.
+![Database Schema](https://github.com/Wacayang-Bangkit-2022/Wacayang-Documentation/blob/main/assets/schema.png)
+* Setup your database connection such as `DB_USER`, `DB_PASS` on the `Connection` tab.
+#### 4. Deploy REST API to Cloud Run
+* There will be two service running on Cloud Run.
+* First, go to `wacayang_general_api` folder via terminal. And run `gcloud run deploy` command. Fill the rest of required fields. When it finish, it should shows your deployed service URL.
+* Do the same for `wacayang_ai_api` folder, run `gcloud run deploy` command. Fill the rest of required fields. When it finish, it should shows your deployed service URL.
+* These URL will be used by Android app to send network request. Replace the URL on `ApiService.kt` inside your Android Studio project to make it works with your deployed API.
+* Go to your Cloud Console then head to your Cloud Run tab.
+* Open your deployed `wacayang_general_api` service and create new revision by choosing `Edit & Deploy New Revision`.
+* On Variable and Secrets tab, add new variable for `DB_NAME`, `DB_USER`, `DB_PASS`, and `INSTANCE_CONNECTION_NAME`. This necessary so your service can connect to your database. Fill these information based on your SQL database instance, then choose `Deploy` to create new revision.
+#### Our Deployed REST API URL
+Please head to this link for our detailed REST API documentation.
+```
+https://documenter.getpostman.com/view/20994859/UyxqDPV6
+```
+
+## Machine Learning Project Installation
+### Components
+* Image Pre-processing
+* Image Augmentation
+* Early Stopping
+* Callbacks
+* Model Checkpoint
+* Convolutional Neural Network (CNN)
+* Transfer Learning
+  * DenseNet121
+  * InceptionV3
+  * ResNet152V2
+* Model Evaluate
+* Accuracy and Loss Graph
+### Requirements
+1. [Google Colaboratory](https://colab.research.google.com/) or [Jupyter Notebook](https://jupyter.org/install).
+2. Kaggle API Token.
+3. Latest Tensorflow Version 2.8.2.
+4. Python Version 3.6 or above.
+### Dataset
+* [Wayang Image Dataset](https://www.kaggle.com/datasets/bayuokta/wayang-bagong-cepot-gareng-petruk-semar)
+
+<p align="center"> <img src="/assets/dataset%20preview.png"></p>
+<p align="center">Dataset Preview</p>
+<p align="center">(Left to right) Bagong, Cepot, Gareng, Petruk, and Semar</p>
+
+### Workflow
+1. [Generate Kaggle API token](https://github.com/Kaggle/kaggle-api#api-credentials) to get `kaggle.json` file
+2. Open the `.ipynb` file in Google Colab or Jupyter Notebook:
+   * [Baseline Model (CNN)](https://colab.research.google.com/github/Wacayang-Bangkit-2022/Wacayang-MachineLearning/blob/main/Wayang%20Classifier/Base%20Model%20(Simple%20CNN)/Baseline_Model.ipynb)
+   * [DenseNet121](https://colab.research.google.com/github/Wacayang-Bangkit-2022/Wacayang-MachineLearning/blob/main/Wayang%20Classifier/Model%20with%20DenseNet121/Wacayang_DenseNet_Model.ipynb)
+   * [InceptionV3](https://colab.research.google.com/github/Wacayang-Bangkit-2022/Wacayang-MachineLearning/blob/main/Wayang%20Classifier/Model%20with%20InceptionV3/Wacayang_InceptionV3_Model.ipynb)
+   * [ResNet152V2](https://colab.research.google.com/github/Wacayang-Bangkit-2022/Wacayang-MachineLearning/blob/main/Wayang%20Classifier/Model%20with%20ResNet152V2/Wacayang_ResNet_Model.ipynb)
+3. Click `Copy to Drive`  or Click `File` > `Save a copy in Drive`. This will allow you to run and edit the `.ipynb` file in your own Google Drive account
+4. Upload your `kaggle.json` file (API Token)
+5. Run every cell in the `.ipynb` file
+6. Download the model `.h5` file by left clicking the `.h5`file in the Colab directory (Automatically saved to `/content/` file by Model Checkpoint)
