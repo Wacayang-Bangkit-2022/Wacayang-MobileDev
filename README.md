@@ -134,6 +134,7 @@ https://documenter.getpostman.com/view/20994859/UyxqDPV6
 4. Python Version 3.6 or above.
 
 ### Dataset
+* [Wayang Image Dataset](https://www.kaggle.com/datasets/bayuokta/wayang-bagong-cepot-gareng-petruk-semar)
 <p align="center"> <img src="https://github.com/Wacayang-Bangkit-2022/Wacayang-Documentation/blob/main/assets/dataset%20preview.png"></p>
 <p align="center">Dataset Preview</p>
 <p align="center">(Left to right) Bagong, Cepot, Gareng, Petruk, and Semar</p>
