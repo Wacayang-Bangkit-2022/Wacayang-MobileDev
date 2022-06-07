@@ -133,7 +133,7 @@ https://documenter.getpostman.com/view/20994859/UyxqDPV6
 3. Latest Tensorflow Version 2.8.2.
 4. Python Version 3.6 or above.
 ### Dataset
-* [Wayang Image Dataset](https://www.kaggle.com/datasets/bayuokta/wayang-bagong-cepot-gareng-petruk-semar)
+* ![Wayang Image Dataset](https://github.com/Wacayang-Bangkit-2022/Wacayang-Documentation/blob/main/assets/dataset%20preview.png)
 
 <p align="center"> <img src="/assets/dataset%20preview.png"></p>
 <p align="center">Dataset Preview</p>
