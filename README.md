@@ -56,6 +56,9 @@ Integration method explanation:
 4. After back-end app finished processing, Cloud Run services will return the result as JSON literals to the Android app.
 5. Android app will process the JSON literals and show relevant information to the user.
 
+## Estimate Google Cloud Platform Pricing
+![GCP Pricing](https://github.com/Wacayang-Bangkit-2022/Wacayang-Documentation/blob/main/assets/cloud_pricing.png)
+
 ## Android Studio Project Installation
 ### Components
 Wacayang Android app is developed using Android Studio IDE. Here are components that we used.
