@@ -13,9 +13,20 @@ Wacayang is a mobile application that able to identify Indonesian wayang kulit c
 Link: https://drive.google.com/file/d/17EXgCPaWJuxIVNsX-qUjfb0lgfdHY-oy/view?usp=sharing<br/>
 Alternative Link: https://drive.google.com/file/d/1hXyMuBRKxxPgjiQkxqbVkO4Q_6UlPJuB/view?usp=sharing
 
+## Wireframe && Mock-Up
+```
+https://www.figma.com/file/JG7eT6Ri8gWlf9k0bcldGp/Wacayang
+```
+
 ## REST API Documentation
 ```
 https://documenter.getpostman.com/view/20994859/UyxqDPV6
+```
+
+## Wayang Content References
+This app use wayang images provided by Wikimedia on Public Domain Licences, and videos from YouTube with attribution. For details, please refer to this link.
+```
+https://docs.google.com/spreadsheets/d/1wiKW1goLW4FmGMa_j7DgjjLb4kS6Mh9Tbfq9UIT5xsY/edit?usp=sharing
 ```
 
 ## App Features
@@ -44,6 +55,9 @@ Integration method explanation:
 3. After token is verified, Cloud Run services will access back-end app depending on the request. If it looking for user or wayang information, it will query to SQL database. If it looking for wayang image prediction, then it will post that image to ML model.
 4. After back-end app finished processing, Cloud Run services will return the result as JSON literals to the Android app.
 5. Android app will process the JSON literals and show relevant information to the user.
+
+## Estimate Google Cloud Platform Pricing
+![GCP Pricing](https://github.com/Wacayang-Bangkit-2022/Wacayang-Documentation/blob/main/assets/cloud_pricing.png)
 
 ## Android Studio Project Installation
 ### Components
