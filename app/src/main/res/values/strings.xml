@@ -73,4 +73,6 @@
     <string name="confirm_deletion">Confirm Deletion</string>
     <string name="delete_comment_confirmation">Delete your comment?</string>
     <string name="no_data">No data.</string>
+    <string name="youtube" translatable="false">YouTube</string>
+    <string name="youtube_error_prompt">You need to install YouTube app first.</string>
 </resources>

@@ -11,6 +11,7 @@ import com.c22_pc383.wacayang.databinding.CommentItemBinding
 import com.c22_pc383.wacayang.helper.Utils
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import org.apache.commons.lang3.StringEscapeUtils
 
 class ListCommentAdapter(private val listItem: List<Comment>) :
     RecyclerView.Adapter<ListCommentAdapter.ListCommentViewHolder>() {
@@ -30,7 +31,9 @@ class ListCommentAdapter(private val listItem: List<Comment>) :
             holder.apply {
                 binding.itemTitle.text = item.userName
                 binding.itemSubtitle.text = Utils.convertToLocalDateTime(item.createdAt)
-                binding.itemDesc.text = item.comment
+
+                val fromUnicode = StringEscapeUtils.unescapeJava(item.comment)
+                binding.itemDesc.text = fromUnicode
 
                 Glide.with(itemView.context)
                     .load(item.userPhoto)

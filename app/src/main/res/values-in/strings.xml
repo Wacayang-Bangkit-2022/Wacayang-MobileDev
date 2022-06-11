@@ -66,4 +66,5 @@
     <string name="confirm_deletion">Konfirmasi Hapus</string>
     <string name="delete_comment_confirmation">Hapus komentar Anda?</string>
     <string name="no_data">Tidak ada data.</string>
+    <string name="youtube_error_prompt">Anda perlu menginstall app YouTube dahulu.</string>
 </resources>

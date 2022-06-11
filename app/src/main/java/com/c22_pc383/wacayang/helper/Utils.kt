@@ -188,5 +188,8 @@ object Utils {
         ).show()
     }
 
-    fun isCurrentUserAnonymous() = Firebase.auth.currentUser?.isAnonymous!!
+    fun isCurrentUserAnonymous(): Boolean {
+        val user = Firebase.auth.currentUser
+        return user?.isAnonymous ?: false
+    }
 }

@@ -17,6 +17,7 @@ import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.c22_pc383.wacayang.helper.Utils
 import com.c22_pc383.wacayang.repository.WayangRepository
 import com.c22_pc383.wacayang.view_model.WayangViewModel
+import org.apache.commons.lang3.StringEscapeUtils
 
 class CommentActivity : AppCompatActivity(), IGeneralSetup {
     private lateinit var binding: ActivityCommentBinding
@@ -126,9 +127,11 @@ class CommentActivity : AppCompatActivity(), IGeneralSetup {
 
     private fun addComment() {
         val content = binding.commentField.text.toString()
+        val toUnicode = StringEscapeUtils.escapeJava(content)
+
         if (content.isNotEmpty()) {
             enableControl(false)
-            viewModel.addComment(AppPreference(this).getToken(), wayangId, content)
+            viewModel.addComment(AppPreference(this).getToken(), wayangId, toUnicode)
         }
     }
 

@@ -1,7 +1,7 @@
 package com.c22_pc383.wacayang
 
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
@@ -20,16 +20,17 @@ import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.c22_pc383.wacayang.helper.Utils
 import com.c22_pc383.wacayang.repository.WayangRepository
 import com.c22_pc383.wacayang.view_model.WayangViewModel
-import com.google.android.youtube.player.YouTubeInitializationResult
-import com.google.android.youtube.player.YouTubePlayer
-import com.google.android.youtube.player.YoutubeFragmentX
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import org.apache.commons.lang3.StringEscapeUtils
 
-class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInitializedListener {
+class DetailsActivity : AppCompatActivity(), IGeneralSetup {
     private lateinit var binding: ActivityDetailsBinding
     private lateinit var viewModel: WayangViewModel
 
-    private var mYouTubePlayer: YouTubePlayer? = null
-    private var isFullscreen = false
+    private var youTubePlayerView: YouTubePlayerView? = null
     private lateinit var mWayang: Wayang
     private var wayangId = -1
 
@@ -68,29 +69,16 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onBackPressed() {
-        if (isFullscreen) mYouTubePlayer?.setFullscreen(!isFullscreen)
-        else super.onBackPressed()
-    }
-
     override fun onResume() {
         super.onResume()
-        mYouTubePlayer?.pause()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-    }
-
-    override fun onPause() {
-        if (isFullscreen) mYouTubePlayer?.setFullscreen(!isFullscreen)
-        super.onPause()
-    }
-
-    override fun onResumeFragments() {
-        super.onResumeFragments()
-        mYouTubePlayer?.pause()
     }
 
     override fun setup() {
         onLoading()
+
+        youTubePlayerView = binding.youtubeFragment
+        lifecycle.addObserver(youTubePlayerView!!)
 
         binding.openComment.setOnClickListener { openComment() }
         binding.viewAllBtn.setOnClickListener { openComment() }
@@ -159,15 +147,28 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
     }
 
     private fun onSuccess() {
-        val key = applicationContext.packageManager
-            .getApplicationInfo(
-                applicationContext.packageName,
-                PackageManager.GET_META_DATA
-            ).metaData["api_key"].toString()
+        youTubePlayerView?.addYouTubePlayerListener(object: AbstractYouTubePlayerListener() {
+            override fun onReady(youTubePlayer: YouTubePlayer) {
+                binding.videoProgressBar.isVisible = false
+                youTubePlayer.cueVideo(Utils.getYoutubeVideoId(mWayang.video), 0f)
+            }
 
-        (supportFragmentManager.findFragmentById(R.id.youtube_fragment) as YoutubeFragmentX)
-            .initialize(key, this)
+            override fun onError(youTubePlayer: YouTubePlayer, error: PlayerConstants.PlayerError) {
+                Toast.makeText(
+                    this@DetailsActivity,
+                    resources.getString(R.string.video_player_failure),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
 
+        binding.youtubeBtn.setOnClickListener {
+            try {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(mWayang.video)))
+            } catch (e: Exception) {
+                Toast.makeText(this@DetailsActivity, resources.getString(R.string.youtube_error_prompt), Toast.LENGTH_SHORT).show()
+            }
+        }
 
         binding.imageSlider.adapter = ImageSliderAdapter(this, Utils.splitImageUrls(mWayang.image))
         binding.imageTabLayout.setupWithViewPager(binding.imageSlider)
@@ -180,7 +181,7 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
         binding.commentHeader.text = resources.getString(R.string.comment_plural, mWayang.totalComments)
         val hasComment = mWayang.totalComments > 0
         if (hasComment) {
-            binding.recentComment.text = mWayang.recentComment
+            binding.recentComment.text = StringEscapeUtils.unescapeJava(mWayang.recentComment)
             Glide.with(this)
                 .load(mWayang.commenterPhoto)
                 .placeholder(Utils.getCircularProgressDrawable(this))
@@ -228,29 +229,6 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup, YouTubePlayer.OnInit
         launchCommentActivity.launch(Intent(this, CommentActivity::class.java).apply {
             putExtra(WAYANG_ID_EXTRA, wayangId)
         })
-    }
-
-    override fun onInitializationSuccess(
-        provider: YouTubePlayer.Provider?,
-        youTubePlayer: YouTubePlayer, b: Boolean
-    ) {
-        if (mYouTubePlayer == null) {
-            mYouTubePlayer = youTubePlayer.apply {
-                setOnFullscreenListener { isFullscreen = it }
-                cueVideo(Utils.getYoutubeVideoId(mWayang.video))
-            }
-        }
-    }
-
-    override fun onInitializationFailure(
-        provider: YouTubePlayer.Provider?,
-        youTubeInitializationResult: YouTubeInitializationResult?
-    ) {
-        Toast.makeText(
-            this@DetailsActivity,
-            getString(R.string.video_player_failure),
-            Toast.LENGTH_SHORT
-        ).show()
     }
 
     companion object {

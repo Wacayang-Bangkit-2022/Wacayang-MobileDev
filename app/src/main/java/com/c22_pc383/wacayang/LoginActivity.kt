@@ -24,7 +24,6 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-
 class LoginActivity : AppCompatActivity(), IGeneralSetup {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
