@@ -31,7 +31,7 @@
     <string name="search_favorite_found">%1$d Favorit Ditemukan</string>
 
     <string name="banner_text">Wayang Apa\nDipelajari Hari Ini?</string>
-    <string name="show_title">Pagelaran Wayang Terkait</string>
+    <string name="show_title">Pagelaran Wayang</string>
     <string name="details_title">Detil Wayang</string>
     <string name="home_header1">Karakter Wayang</string>
     <string name="refresh">Muat Ulang</string>
@@ -67,4 +67,5 @@
     <string name="delete_comment_confirmation">Hapus komentar Anda?</string>
     <string name="no_data">Tidak ada data.</string>
     <string name="youtube_error_prompt">Anda perlu menginstall app YouTube dahulu.</string>
+    <string name="youtube">Full di YouTube</string>
 </resources>

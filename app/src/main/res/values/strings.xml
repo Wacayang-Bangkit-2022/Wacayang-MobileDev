@@ -36,7 +36,7 @@
     <string name="search_favorite_found">%1$d Favorite(s) Found</string>
 
     <string name="banner_text">What Wayang to\nDiscover Today?</string>
-    <string name="show_title">Related Wayang Show</string>
+    <string name="show_title">Wayang Show</string>
     <string name="details_title">Wayang Details</string>
     <string name="home_header1">Wayang Characters</string>
     <string name="refresh">Refresh Page</string>
@@ -73,6 +73,6 @@
     <string name="confirm_deletion">Confirm Deletion</string>
     <string name="delete_comment_confirmation">Delete your comment?</string>
     <string name="no_data">No data.</string>
-    <string name="youtube" translatable="false">YouTube</string>
+    <string name="youtube">Full on YouTube</string>
     <string name="youtube_error_prompt">You need to install YouTube app first.</string>
 </resources>

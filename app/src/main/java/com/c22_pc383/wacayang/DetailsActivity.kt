@@ -20,18 +20,17 @@ import com.c22_pc383.wacayang.helper.IGeneralSetup
 import com.c22_pc383.wacayang.helper.Utils
 import com.c22_pc383.wacayang.repository.WayangRepository
 import com.c22_pc383.wacayang.view_model.WayangViewModel
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.util.Util
 import org.apache.commons.lang3.StringEscapeUtils
 
 class DetailsActivity : AppCompatActivity(), IGeneralSetup {
     private lateinit var binding: ActivityDetailsBinding
     private lateinit var viewModel: WayangViewModel
 
-    private var youTubePlayerView: YouTubePlayerView? = null
-    private lateinit var mWayang: Wayang
+    private var videoPlayer: ExoPlayer? = null
+    private var mWayang: Wayang? = null
     private var wayangId = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,16 +68,29 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (Util.SDK_INT >= 24) initVideoPlayer()
+    }
+
     override fun onResume() {
         super.onResume()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        if (Util.SDK_INT < 24 && videoPlayer == null) initVideoPlayer()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (Util.SDK_INT <= 24) releaseVideoPlayer()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (Util.SDK_INT >= 24) releaseVideoPlayer()
     }
 
     override fun setup() {
         onLoading()
-
-        youTubePlayerView = binding.youtubeFragment
-        lifecycle.addObserver(youTubePlayerView!!)
 
         binding.openComment.setOnClickListener { openComment() }
         binding.viewAllBtn.setOnClickListener { openComment() }
@@ -116,8 +128,8 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup {
                 binding.favoriteBtn.isEnabled = true
                 if (it) Utils.toastNetworkError(this@DetailsActivity)
                 else {
-                    mWayang.isFavorite = 1
-                    setupFavoriteButton(mWayang.isFavorite == 1)
+                    mWayang?.isFavorite = 1
+                    setupFavoriteButton(mWayang?.isFavorite == 1)
                 }
             }
 
@@ -125,8 +137,8 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup {
                 binding.favoriteBtn.isEnabled = true
                 if (it) Utils.toastNetworkError(this@DetailsActivity)
                 else {
-                    mWayang.isFavorite = 0
-                    setupFavoriteButton(mWayang.isFavorite == 1)
+                    mWayang?.isFavorite = 0
+                    setupFavoriteButton(mWayang?.isFavorite == 1)
                 }
             }
         }
@@ -147,43 +159,30 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup {
     }
 
     private fun onSuccess() {
-        youTubePlayerView?.addYouTubePlayerListener(object: AbstractYouTubePlayerListener() {
-            override fun onReady(youTubePlayer: YouTubePlayer) {
-                binding.videoProgressBar.isVisible = false
-                youTubePlayer.cueVideo(Utils.getYoutubeVideoId(mWayang.video), 0f)
-            }
-
-            override fun onError(youTubePlayer: YouTubePlayer, error: PlayerConstants.PlayerError) {
-                Toast.makeText(
-                    this@DetailsActivity,
-                    resources.getString(R.string.video_player_failure),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
+        cueVideoToPlayer()
 
         binding.youtubeBtn.setOnClickListener {
             try {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(mWayang.video)))
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(mWayang?.video)))
             } catch (e: Exception) {
                 Toast.makeText(this@DetailsActivity, resources.getString(R.string.youtube_error_prompt), Toast.LENGTH_SHORT).show()
             }
         }
 
-        binding.imageSlider.adapter = ImageSliderAdapter(this, Utils.splitImageUrls(mWayang.image))
+        binding.imageSlider.adapter = ImageSliderAdapter(this, Utils.splitImageUrls(mWayang?.image!!))
         binding.imageTabLayout.setupWithViewPager(binding.imageSlider)
 
-        binding.itemTitle.text = mWayang.name
-        binding.itemDesc.text = mWayang.description
-        val courtesy = "<b>${resources.getString(R.string.courtesy)}:</b> ${mWayang.video}"
+        binding.itemTitle.text = mWayang?.name
+        binding.itemDesc.text = mWayang?.description
+        val courtesy = "<b>${resources.getString(R.string.courtesy)}:</b> ${mWayang?.video}"
         Utils.setHtmlText(binding.videoSourceInfo, courtesy)
 
-        binding.commentHeader.text = resources.getString(R.string.comment_plural, mWayang.totalComments)
-        val hasComment = mWayang.totalComments > 0
+        binding.commentHeader.text = resources.getString(R.string.comment_plural, mWayang?.totalComments)
+        val hasComment = mWayang?.totalComments!! > 0
         if (hasComment) {
-            binding.recentComment.text = StringEscapeUtils.unescapeJava(mWayang.recentComment)
+            binding.recentComment.text = StringEscapeUtils.unescapeJava(mWayang?.recentComment)
             Glide.with(this)
-                .load(mWayang.commenterPhoto)
+                .load(mWayang?.commenterPhoto)
                 .placeholder(Utils.getCircularProgressDrawable(this))
                 .circleCrop()
                 .into(binding.commenterPhoto)
@@ -192,7 +191,7 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup {
         binding.viewAllBtn.isVisible = hasComment
         binding.openComment.isVisible = !hasComment
 
-        setupFavoriteButton(mWayang.isFavorite == 1)
+        setupFavoriteButton(mWayang?.isFavorite == 1)
         binding.favoriteBtn.setOnClickListener { toggleFavorite() }
 
         binding.mainView.isVisible = true
@@ -213,8 +212,8 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup {
         }
 
         binding.favoriteBtn.isEnabled = false
-        if (mWayang.isFavorite == 1) viewModel.delFavorite(AppPreference(this).getToken(), mWayang.id)
-        else viewModel.addFavorite(AppPreference(this).getToken(), mWayang.id)
+        if (mWayang?.isFavorite == 1) viewModel.delFavorite(AppPreference(this).getToken(), mWayang?.id!!)
+        else viewModel.addFavorite(AppPreference(this).getToken(), mWayang?.id!!)
     }
 
     private val launchCommentActivity = registerForActivityResult(
@@ -229,6 +228,28 @@ class DetailsActivity : AppCompatActivity(), IGeneralSetup {
         launchCommentActivity.launch(Intent(this, CommentActivity::class.java).apply {
             putExtra(WAYANG_ID_EXTRA, wayangId)
         })
+    }
+
+    private fun initVideoPlayer() {
+        videoPlayer = ExoPlayer.Builder(this).build()
+        binding.videoPlayer.player = videoPlayer
+        binding.videoProgressBar.isVisible = true
+
+        cueVideoToPlayer()
+    }
+
+    private fun cueVideoToPlayer() {
+        if (mWayang == null || videoPlayer == null) return
+
+        val link = "https://raw.githubusercontent.com/Wacayang-Bangkit-2022/Wacayang-Documentation/main/assets/videos/${mWayang!!.name.lowercase()}_video.mp4"
+        videoPlayer?.setMediaItem(MediaItem.fromUri(link))
+        videoPlayer?.prepare()
+        binding.videoProgressBar.isVisible = false
+    }
+
+    private fun releaseVideoPlayer() {
+        videoPlayer?.release()
+        videoPlayer = null
     }
 
     companion object {
