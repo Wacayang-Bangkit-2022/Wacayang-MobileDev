@@ -9,6 +9,11 @@
 ## About
 Wacayang is a mobile application that able to identify Indonesian wayang kulit characters. This app uses images uploaded by the user as input, and the information about the name, description, image, and related video about the identified wayang character will be displayed on the app.
 
+## Presentation and Demo Video
+```
+https://youtu.be/u1vkZIZzopQ
+```
+
 ## Android APK File (Minimum Android SDK 21)
 Link: https://drive.google.com/file/d/17EXgCPaWJuxIVNsX-qUjfb0lgfdHY-oy/view?usp=sharing<br/>
 Alternative Link: https://drive.google.com/file/d/1hXyMuBRKxxPgjiQkxqbVkO4Q_6UlPJuB/view?usp=sharing
@@ -67,7 +72,7 @@ Wacayang Android app is developed using Android Studio IDE. Here are components 
 * Using [RecycleView](https://developer.android.com/guide/topics/ui/layout/recyclerview) and its adapater for item listing.
 * [CameraX](https://developer.android.com/training/camerax) to utilize mobile camera features including flash, front/back camera, and more.
 * Using [Retrofit](https://square.github.io/retrofit/) library for network request.
-* Using official [Youtube API](https://developers.google.com/youtube/android/player) for Youtube video player.
+* Using [ExoPlayer](https://exoplayer.dev/) to play videos.
 * [BottomNavigation](https://developer.android.com/reference/com/google/android/material/bottomnavigation/BottomNavigationView) to navigate between main menus (Home, Favorite, and Settings).
 * Connected to [Firebase Auth](https://firebase.google.com/docs/auth) for Google and anonymous sign in.
 * Utilize [LiveData](https://developer.android.com/topic/libraries/architecture/livedata), [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel), and [Repository](https://developer.android.com/codelabs/basic-android-kotlin-training-repository-pattern) pattern for Single Source of Truth (SSOT)
