@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".ConfirmUploadActivity">
 
+    <TextView
+        style="@style/SubTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/image_rotated_prompt"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/item_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <ImageView
         android:id="@+id/item_image"
         android:layout_width="match_parent"
